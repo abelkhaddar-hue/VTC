@@ -2,3 +2,12 @@ node_modules/
 .DS_Store
 # captures de l’original : référence locale uniquement, jamais publiées
 replica/screens/
+
+# secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+supabase/.temp/
+supabase/.branches/
+scripts/node_modules/

@@ -1,29 +1,29 @@
 feature,area,priority,original,clone,notes
-Inscription par numéro de téléphone + code SMS,compte,must,yes,partial,S02-S03 | S02-S03 faits ; SMS simulé (code 123456) en attendant Twilio
+Inscription par numéro de téléphone + code SMS,compte,must,yes,partial,S02-S03 | S02-S03 faits ; SMS simulé (code 123456) en attendant Twilio | backend : connexion Supabase par SMS écrite (codes de test 123456) ; à vérifier sur un vrai projet
 Création du profil (prénom e-mail photo),compte,must,yes,partial,S04 | S04 prénom + e-mail ; photo pas encore
 Carte plein écran avec position actuelle,demande,must,yes,partial,S05 ; gérer refus de localisation | carte de démo (points projetés) ; Google Maps à brancher
-Saisie départ / arrivée avec suggestions d'adresses,demande,must,yes,partial,S06 | S06 recherche + récents sur 14 lieux de démo ; Places API à brancher
+Saisie départ / arrivée avec suggestions d'adresses,demande,must,yes,partial,"S06 | S06 recherche + récents sur 14 lieux de démo ; Places API à brancher | backend : Edge Function places (Google si clé, sinon lieux connus)"
 Choisir un point en déplaçant l'épingle sur la carte,demande,must,yes,partial,S06 ; aide 8 | toucher la carte pour placer le point (pas de glisser)
-Prix recommandé calculé selon l'itinéraire,tarif,must,yes,partial,S07 ; formule simple au départ | même formule que le SQL ; distance calculée sur un faux itinéraire
+Prix recommandé calculé selon l'itinéraire,tarif,must,yes,partial,"S07 ; formule simple au départ | même formule que le SQL ; distance calculée sur un faux itinéraire | backend : Edge Function quote (Google Routes si clé, sinon estimation)"
 Le passager propose son propre prix (au-dessus du minimum),tarif,must,yes,yes,cœur du produit ; aide 6 | S07 pavé + minimum vérifié côté données
 Choix du mode de paiement dans le formulaire,paiement,must,yes,yes,espèces au minimum ; aide 5 | espèces / carte selon la ville
 Bouton Trouver un chauffeur et écran de recherche,demande,must,yes,yes,S09 | S09
 Diffusion de la demande aux chauffeurs proches,enchères,must,yes,partial,temps réel ; côté chauffeur requis | chauffeurs simulés ; pas encore d’app chauffeur
-Réception des offres en direct (accepte ou contre-offre),enchères,must,yes,partial,S10 | S10 temps réel simulé (abonnements) ; Supabase Realtime à brancher
+Réception des offres en direct (accepte ou contre-offre),enchères,must,yes,partial,S10 | S10 temps réel simulé (abonnements) ; Supabase Realtime à brancher | backend : temps réel Supabase écrit (offers) ; à vérifier sur un vrai projet
 Carte d'offre : prix note ETA véhicule photo,enchères,must,yes,yes,"S10 | prix, contre-offre, ETA, note, véhicule, compte à rebours"
 Accepter une offre / refuser une offre,enchères,must,yes,yes,S10 | S10 ; erreur si l’offre expire pendant l’acceptation
 Expiration automatique des offres,enchères,must,yes,yes,compte à rebours par offre | 45 s
 Augmenter son prix pendant la recherche,enchères,must,yes,yes,F03 ; aide 6 | F03 testé : 30 → 35 MAD
-Écran chauffeur en route avec position en direct,suivi,must,yes,partial,S11 | S11 position simulée
+Écran chauffeur en route avec position en direct,suivi,must,yes,partial,"S11 | S11 position simulée | backend : positions via ride_locations en temps réel, écrit ; à vérifier"
 Infos véhicule : modèle couleur plaque,suivi,must,yes,yes,S11 ; sécurité | S11 + rappel de vérifier la plaque
 Course en cours avec itinéraire et ETA,suivi,must,yes,yes,S14 | S14
 Annulation avec motif,annulation,must,yes,yes,S16 ; aide 7 | S16 + restriction après 3 annulations / 24 h
 Prix figé une fois l'offre acceptée,tarif,must,yes,yes,aide 6 | rappel affiché en S15
 Note du chauffeur en fin de course,notes,must,yes,yes,S15 | S15 étoiles + étiquettes + commentaire
 Note moyenne du passager visible,notes,must,yes,yes,S17 ; le chauffeur note aussi | S17
-Historique des courses,historique,must,yes,partial,S18 | S18 liste + détail ; les courses de démo disparaissent au rechargement
+Historique des courses,historique,must,yes,partial,S18 | S18 liste + détail ; les courses de démo disparaissent au rechargement | backend : my_rides() en base : les courses ne disparaissent plus en mode Supabase
 Bouton d'appel aux urgences pendant la course,sécurité,must,yes,yes,"S13 | S13 police 19, SAMU 15"
-Partager sa course en direct (lien web),sécurité,must,yes,partial,S13 + S21 | S13 → S21 ; le lien ne marche que dans le même navigateur tant que la base est simulée
+Partager sa course en direct (lien web),sécurité,must,yes,partial,S13 + S21 | S13 → S21 ; le lien ne marche que dans le même navigateur tant que la base est simulée | backend : shared_ride() en base : lien utilisable par n’importe qui en mode Supabase
 Messagerie avec le chauffeur sans partager son numéro,communication,should,yes,yes,S12 | S12 + réponses rapides ; réponse du chauffeur simulée
 Appel masqué avec le chauffeur,communication,should,yes,no,"S12 ; prestataire téléphonie | bouton présent, message « bientôt »"
 Contacts d'urgence enregistrés,sécurité,should,yes,yes,"S13 / S19 | écran dédié /contacts, 5 max"
@@ -48,6 +48,6 @@ Ville à ville et covoiturage,services,could,yes,skip,hors tranche choisie
 Livraison coursier et fret,services,could,yes,skip,hors tranche choisie
 inDrive.Money (crédit),services,could,yes,skip,activité financière réglementée
 Réseau de chauffeurs existant,réseau,must,yes,skip,à recruter soi-même
-Prix recommandés appris sur l'historique d'inDrive,données,could,yes,skip,données propriétaires
+Prix recommandés appris sur l'historique d'inDrive,données,could,yes,skip,"données propriétaires | backend : Edge Function quote (Google Routes si clé, sinon estimation)"
 Marque logo couleurs illustrations textes,marque,must,yes,skip,à recréer avec /replica-brand
 Statut légal d'agrégateur au Maroc,légal,must,yes,skip,à faire valider par un avocat

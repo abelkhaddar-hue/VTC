@@ -1,6 +1,6 @@
 # Architecture : (nom à choisir) — reconstruction de la course en ville d'inDrive
 
-Lit : `recon.md` (S01-S22, F01-F08) et `features.csv`. Schéma : `schema.sql` (première migration), testé par `schema.test.mjs` (37 vérifications, toutes vertes le 2026-10-15).
+Lit : `recon.md` (S01-S22, F01-F08) et `features.csv`. Schéma : `supabase/migrations/` (4 migrations), testé par `scripts/db-tests.mjs` (56 vérifications, toutes vertes le 2026-10-15). Détail du branchement : `replica/backend.md`.
 
 ## Stack
 

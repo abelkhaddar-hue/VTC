@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { router } from 'expo-router'
 import { Contact, Trash2 } from 'lucide-react-native'
-import { account, demo, type Profile, type Scenario } from '@/data/api'
+import { account, dataSource, demo, type Profile, type Scenario } from '@/data/api'
 import { useAction, useLoad } from '@/data/hooks'
 import { Screen, Skeleton } from '@/ui/layout'
 import { Text } from '@/ui/Text'
@@ -63,19 +63,23 @@ export default function Settings() {
         <ListRow icon={Contact} label="Contacts d’urgence" detail="Prévenus en cas d’alerte" onPress={() => router.push('/contacts')} />
       </Card>
 
-      <Title>Mode démo (équipe)</Title>
-      <Card style={{ gap: 12 }}>
-        <Text variant="sm" tone="muted">Pour essayer chaque situation sans vrais chauffeurs.</Text>
-        <ChoiceList mode="single" value={scenario} onChange={(v) => { setScenario(v); demo.scenario = v[0] }} options={[
-          { value: 'normal', label: 'Normal : 3 chauffeurs répondent' },
-          { value: 'no_offers', label: 'Aucun chauffeur ne répond' },
-          { value: 'counters_only', label: 'Seulement des contre-offres' },
-          { value: 'network_error', label: 'Pas de réseau' },
-        ]} />
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          {[1, 3].map((s) => <Chip key={s} label={s === 1 ? 'Vitesse normale' : 'Accéléré ×3'} selected={speed === s} onPress={() => { setSpeed(s); demo.speed = s }} />)}
-        </View>
-      </Card>
+      {dataSource === 'fake' ? (
+        <>
+        <Title>Mode démo (équipe)</Title>
+        <Card style={{ gap: 12 }}>
+          <Text variant="sm" tone="muted">Pour essayer chaque situation sans vrais chauffeurs.</Text>
+          <ChoiceList mode="single" value={scenario} onChange={(v) => { setScenario(v); demo.scenario = v[0] }} options={[
+            { value: 'normal', label: 'Normal : 3 chauffeurs répondent' },
+            { value: 'no_offers', label: 'Aucun chauffeur ne répond' },
+            { value: 'counters_only', label: 'Seulement des contre-offres' },
+            { value: 'network_error', label: 'Pas de réseau' },
+          ]} />
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {[1, 3].map((s) => <Chip key={s} label={s === 1 ? 'Vitesse normale' : 'Accéléré ×3'} selected={speed === s} onPress={() => { setSpeed(s); demo.speed = s }} />)}
+          </View>
+        </Card>
+        </>
+      ) : null}
 
       <Title>Compte</Title>
       <Card style={{ gap: 12 }}>

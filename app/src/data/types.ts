@@ -68,6 +68,9 @@ export type RideSummary = {
   driverName: string; vehicle: string; payment: PaymentMethod; distanceM: number; durationS: number; myStars?: number
 }
 
+// Où reprendre au lancement de l'app.
+export type ActiveState = { rideId?: string; rideToRate?: string; requestId?: string }
+
 export type EmergencyContact = { id: string; name: string; phone: string }
 
 export type SharedRide = {

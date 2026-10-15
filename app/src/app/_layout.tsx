@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Stack, router, useSegments } from 'expo-router'
 import { auth } from '@/data/api'
 import { StatusBar } from 'expo-status-bar'
@@ -9,19 +9,21 @@ import { color } from '@/theme'
 // Écrans ouverts sans compte : accueil, connexion, lien de suivi partagé, vitrine du design.
 const PUBLIC = new Set(['welcome', 'login', 's', 'design', 'index'])
 
-function useSessionGuard() {
+function useSessionGuard(ready: boolean) {
   const segments = useSegments()
   const first = (segments[0] as string | undefined) ?? 'index'
   useEffect(() => {
-    if (!PUBLIC.has(first) && !auth.session()) router.replace('/welcome')
-  }, [first])
+    if (ready && !PUBLIC.has(first) && !auth.session()) router.replace('/welcome')
+  }, [first, ready])
   useEffect(() => auth.onSession((s) => { if (!s) router.replace('/welcome') }), [])
 }
 
 export default function RootLayout() {
   const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold })
-  useSessionGuard()
-  if (!loaded) return null
+  const [sessionReady, setSessionReady] = useState(false)
+  useEffect(() => { auth.ready().catch(() => {}).finally(() => setSessionReady(true)) }, [])
+  useSessionGuard(sessionReady)
+  if (!loaded || !sessionReady) return null
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />

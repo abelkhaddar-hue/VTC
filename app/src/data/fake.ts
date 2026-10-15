@@ -3,7 +3,7 @@
 // la remplacer ne doit changer aucun écran.
 import { casablanca, drivers, fares, myPosition, places, seedContacts, seedHistory, serviceArea } from './seed'
 import {
-  ApiError, type CancelReason, type EmergencyContact, type LngLat, type Message, type Offer, type PaymentMethod,
+  ApiError, type ActiveState, type CancelReason, type EmergencyContact, type LngLat, type Message, type Offer, type PaymentMethod,
   type Place, type Profile, type Quote, type RideOption, type RideRequest, type RideSummary, type RideView,
   type ServiceCode, type Session, type SharedRide, type SupportTicket, type Unsubscribe,
 } from './types'
@@ -133,6 +133,7 @@ function assertActive() {
 // ───────── compte (S02-S04, S19, S22) ─────────
 
 export const auth = {
+  ready: () => Promise.resolve(),
   session: () => db.session,
   onSession: (fn: Listener<Session | null>) => on('session', fn),
 
@@ -211,7 +212,7 @@ export const geo = {
       ? { ...nearest, id: id('pl') }
       : { id: id('pl'), name: `Près de ${nearest.name}`, detail: `à ${Math.round(d / 10) * 10} m · position choisie`, point: p, kind: 'street' }
   }),
-  recent: () => call(() => db.recentPlaceIds.map((pid) => places.find((p) => p.id === pid)!).filter(Boolean).map((p) => ({ ...p, kind: 'recent' as const }))),
+  recent: () => call((): Place[] => db.recentPlaceIds.map((pid) => places.find((p) => p.id === pid)!).filter(Boolean).map((p) => ({ ...p, kind: 'recent' as const }))),
   search: (text: string) => call(() => {
     const q = norm(text.trim())
     if (q.length < 2) return []
@@ -326,7 +327,7 @@ export const rides = {
   onRide: (rid: string, fn: Listener<RideView>) => on(`ride:${rid}`, fn),
 
   // Pour reprendre l'app au bon écran après une coupure.
-  active: () => call(() => {
+  active: () => call((): ActiveState => {
     const ride = [...db.rides.values()].find((x) => ['driver_en_route', 'driver_arrived', 'in_progress'].includes(x.status))
     if (ride) return { rideId: ride.id }
     const done = [...db.rides.values()].find((x) => x.status === 'completed' && !x.rated)

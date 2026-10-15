@@ -44,3 +44,15 @@ revoke execute on function sim_as(uuid), sim_driver_location(uuid, double precis
 grant execute on function sim_driver_location(uuid, double precision, double precision, smallint),
   sim_driver_offer(uuid, uuid, integer), sim_driver_advance(uuid, uuid, text), sim_driver_message(uuid, uuid, text)
   to service_role;
+
+-- Coordonnées et état d'une demande, lisibles par le simulateur (la colonne geography n'est pas du JSON).
+create or replace function sim_request_info(p_request uuid)
+returns table (status text, passenger_id uuid, pickup_lng double precision, pickup_lat double precision,
+               dropoff_lng double precision, dropoff_lat double precision, offered_fare_cents integer, route_polyline text)
+language sql stable security definer set search_path = public, extensions as $$
+  select q.status, q.passenger_id, st_x(q.pickup::geometry), st_y(q.pickup::geometry),
+         st_x(q.dropoff::geometry), st_y(q.dropoff::geometry), q.offered_fare_cents, q.route_polyline
+  from ride_requests q where q.id = p_request
+$$;
+revoke execute on function sim_request_info(uuid) from public, anon, authenticated;
+grant execute on function sim_request_info(uuid) to service_role;

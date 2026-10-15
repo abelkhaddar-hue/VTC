@@ -32,11 +32,8 @@ const files = [
 for (const f of files) {
   try { await db.exec(readFileSync(f, 'utf8')) } catch (e) { console.log('ERREUR SQL', f, ':', e.message, 'pos', e.position, e.where ?? ''); process.exit(1) }
 }
-await db.exec(`
-  grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;
-  grant usage, select on all sequences in schema public to anon, authenticated, service_role;
-  grant execute on all functions in schema extensions to anon, authenticated, service_role;
-`)
+// Les droits sur les tables viennent de la migration grants (pas de droits « tout » ici).
+await db.exec(`grant execute on all functions in schema extensions to anon, authenticated, service_role;`)
 ok(`schéma chargé (${files.length} fichiers)`)
 
 const as = async (role, uid, sql, params = []) => {
@@ -81,11 +78,13 @@ await expectErr('deuxième demande simultanée refusée',
 
 // RLS
 ;(await as('authenticated', other, `select * from ride_requests`)).length === 0 ? ok('un autre utilisateur ne voit pas la demande') : fail('fuite de demande')
-;(await as('anon', null, `select * from profiles`)).length === 0 ? ok('anonyme ne voit aucun profil') : fail('fuite profils')
+await expectErr('anonyme ne peut pas lire les profils', () => as('anon', null, `select * from profiles`), 'permission denied')
 ;(await as('authenticated', pax, `select * from profiles`)).length === 1 ? ok('passager ne voit que son profil') : fail('profils visibles')
-await as('authenticated', pax, `update profiles set rating_sum = 999, rating_count = 1, first_name = 'Sara B.' where id = $1`, [pax])
+await expectErr('le passager ne peut pas toucher à sa note', () => as('authenticated', pax, `update profiles set rating_sum = 999, rating_count = 1 where id = $1`, [pax]), 'permission denied')
+await as('authenticated', pax, `update profiles set first_name = 'Sara B.' where id = $1`, [pax])
+await as('authenticated', pax, `update profiles set first_name = 'Pirate' where id = $1`, [d1])
 const me = (await db.query(`select rating_sum, first_name from profiles where id = $1`, [pax])).rows[0]
-me.rating_sum === 0 && me.first_name === 'Sara B.' ? ok('le passager change son prénom mais pas sa note') : fail(JSON.stringify(me))
+me.rating_sum === 0 && me.first_name === 'Sara B.' && (await db.query(`select first_name from profiles where id = $1`, [d1])).rows[0].first_name !== 'Pirate' ? ok('le passager change son prénom, pas celui des autres') : fail(JSON.stringify(me))
 
 // Enchères
 const near = await as('authenticated', d1, `select * from driver_nearby_requests()`)
@@ -205,6 +204,10 @@ await as('service_role', null, `select sim_driver_location($1, -7.6005, 33.5905,
 const loc = await as('authenticated', pax, `select lng, lat from ride_locations where ride_id = $1 order by recorded_at desc limit 1`, [simRide])
 loc.length === 1 && Math.abs(loc[0].lng + 7.6005) < 1e-6 ? ok('position du chauffeur lisible en lng/lat par le passager') : fail('positions ' + JSON.stringify(loc))
 ;(await as('authenticated', other, `select * from ride_locations where ride_id = $1`, [simRide])).length === 0 ? ok('positions invisibles pour un tiers') : fail('fuite positions')
+
+const info = (await as('service_role', null, `select * from sim_request_info($1)`, [req4]))[0]
+Math.abs(info.pickup_lng + 7.6) < 1e-9 && info.status === 'matched' ? ok('simulateur : coordonnées d’une demande lisibles') : fail('info ' + JSON.stringify(info))
+await expectErr('sim_request_info interdit à un utilisateur', () => as('authenticated', pax, `select * from sim_request_info($1)`, [req4]), 'permission denied')
 
 console.log(failures ? `\n${failures} échec(s)` : '\nTout passe.')
 process.exit(failures ? 1 : 0)

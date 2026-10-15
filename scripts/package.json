@@ -1,0 +1,15 @@
+{
+  "name": "ride-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node --env-file=.env seed-drivers.mjs",
+    "simulate": "node --env-file=.env simulate-drivers.mjs",
+    "test:db": "node db-tests.mjs ../supabase"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@electric-sql/pglite-postgis": "^0.2.10",
+    "@supabase/supabase-js": "^2.118.0"
+  }
+}

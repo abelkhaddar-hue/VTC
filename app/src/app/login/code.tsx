@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
-import { account, auth, DEMO_CODE } from '@/data/api'
+import { account, auth, dataSource, DEMO_CODE } from '@/data/api'
 import { useAction } from '@/data/hooks'
 import { Screen } from '@/ui/layout'
 import { Text } from '@/ui/Text'
@@ -37,7 +37,7 @@ export default function Code() {
         loading={resend.busy} onPress={async () => { if (await resend.run(phone)) { setResendIn(45); verify.setError(undefined) } }} />
     }>
       <Text tone="muted">Envoyé au +212 {formatMoroccanPhone(phone).replace(/^0/, '')}.</Text>
-      <Banner kind="info" title={`Version de démonstration : le code est ${DEMO_CODE}`} />
+      {dataSource === 'fake' ? <Banner kind="info" title={`Version de démonstration : le code est ${DEMO_CODE}`} /> : null}
       <CodeInput value={code} error={verify.error}
         onChange={(v) => { setCode(v); verify.setError(undefined); if (v.length === 6) submit(v) }} />
       {verify.busy ? <Text tone="muted" center accessibilityLiveRegion="polite">Vérification…</Text> : null}

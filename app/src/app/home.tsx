@@ -34,6 +34,7 @@ function SheetRow({ icon: Icon, label, value, onPress, a11y }: { icon: LucideIco
 export default function Home() {
   const d = useDraft()
   const [me, setMe] = useState<{ lng: number; lat: number } | null>(null)
+  const [locationError, setLocationError] = useState<string>()
   const [city, setCity] = useState<City>()
   const [profile, setProfile] = useState<Profile>()
   const [quoteError, setQuoteError] = useState<string>()
@@ -48,7 +49,7 @@ export default function Home() {
     geo.myPosition().then(async (p) => {
       setMe(p)
       if (!draft.get().pickup) draft.set({ pickup: await geo.reverse(p) })
-    }).catch(() => {})
+    }).catch((e) => setLocationError(e instanceof Error ? e.message : undefined))
     return unsub
   }, [])
 
@@ -89,11 +90,12 @@ export default function Home() {
         </View>
       }
     >
+      {locationError && !d.pickup ? <Banner kind="warning" title="Position introuvable" body={locationError} /> : null}
       {restricted ? <Banner kind="danger" title="Compte limité pour 2 h" body="Trop d’annulations aujourd’hui. Vous pourrez commander de nouveau un peu plus tard." /> : null}
       <ServiceTabs value={d.service} onChange={(service) => draft.set({ service })}
         unavailable={city?.rideTypes.filter((t) => !t.available).map((t) => t.code) ?? []} />
       <View style={{ gap: 8 }}>
-        <AddressField kind="pickup" value={d.pickup?.name} placeholder="Recherche de votre position…" onPress={() => router.push({ pathname: '/place', params: { field: 'pickup' } })}
+        <AddressField kind="pickup" value={d.pickup?.name} placeholder={locationError ? 'Choisissez votre départ' : 'Recherche de votre position…'} onPress={() => router.push({ pathname: '/place', params: { field: 'pickup' } })}
           error={quoteError?.includes('départ') ? quoteError : undefined} />
         <AddressField kind="dropoff" value={d.dropoff?.name} placeholder="Où allez-vous ?" onPress={() => router.push({ pathname: '/place', params: { field: 'dropoff' } })}
           error={quoteError && !quoteError.includes('départ') ? quoteError : undefined} />
