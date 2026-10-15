@@ -1,0 +1,53 @@
+feature,area,priority,original,clone,notes
+Inscription par numéro de téléphone + code SMS,compte,must,yes,no,S02-S03
+Création du profil (prénom e-mail photo),compte,must,yes,no,S04
+Carte plein écran avec position actuelle,demande,must,yes,no,S05 ; gérer refus de localisation
+Saisie départ / arrivée avec suggestions d'adresses,demande,must,yes,no,S06
+Choisir un point en déplaçant l'épingle sur la carte,demande,must,yes,no,S06 ; aide 8
+Prix recommandé calculé selon l'itinéraire,tarif,must,yes,no,S07 ; formule simple au départ
+Le passager propose son propre prix (au-dessus du minimum),tarif,must,yes,no,cœur du produit ; aide 6
+Choix du mode de paiement dans le formulaire,paiement,must,yes,no,espèces au minimum ; aide 5
+Bouton Trouver un chauffeur et écran de recherche,demande,must,yes,no,S09
+Diffusion de la demande aux chauffeurs proches,enchères,must,yes,no,temps réel ; côté chauffeur requis
+Réception des offres en direct (accepte ou contre-offre),enchères,must,yes,no,S10
+Carte d'offre : prix note ETA véhicule photo,enchères,must,yes,no,S10
+Accepter une offre / refuser une offre,enchères,must,yes,no,S10
+Expiration automatique des offres,enchères,must,yes,no,compte à rebours par offre
+Augmenter son prix pendant la recherche,enchères,must,yes,no,F03 ; aide 6
+Écran chauffeur en route avec position en direct,suivi,must,yes,no,S11
+Infos véhicule : modèle couleur plaque,suivi,must,yes,no,S11 ; sécurité
+Course en cours avec itinéraire et ETA,suivi,must,yes,no,S14
+Annulation avec motif,annulation,must,yes,no,S16 ; aide 7
+Prix figé une fois l'offre acceptée,tarif,must,yes,no,aide 6
+Note du chauffeur en fin de course,notes,must,yes,no,S15
+Note moyenne du passager visible,notes,must,yes,no,S17 ; le chauffeur note aussi
+Historique des courses,historique,must,yes,no,S18
+Bouton d'appel aux urgences pendant la course,sécurité,must,yes,no,S13
+Partager sa course en direct (lien web),sécurité,must,yes,no,S13 + S21
+Messagerie avec le chauffeur sans partager son numéro,communication,should,yes,no,S12
+Appel masqué avec le chauffeur,communication,should,yes,no,S12 ; prestataire téléphonie
+Contacts d'urgence enregistrés,sécurité,should,yes,no,S13 / S19
+Options : siège enfant bagages animal nb passagers,demande,should,yes,no,S08
+Commentaire libre pour le chauffeur,demande,should,yes,no,S08
+Types de course Confort et XL,demande,should,yes,no,S05 ; aide 10
+Reçu téléchargeable par course,historique,should,yes,no,aide 12
+Support par chat in-app,support,should,yes,no,S20
+Signalement d'objet oublié / litige de prix,support,should,yes,no,S20 ; aide 6
+Blocage temporaire après abus d'annulations ou incident,confiance,should,yes,no,S22
+Avertissement péages et frais d'aéroport hors tarif,tarif,should,yes,no,aide 6
+Paiement par carte bancaire,paiement,should,yes,no,prestataire marocain (ex. CMI) à choisir
+Suppression du compte depuis l'app,compte,should,yes,no,obligatoire Play/App Store
+Changer de ville par défaut,compte,could,yes,no,aide 8
+Adresses récentes / favorites,demande,could,yes,no,S06 ; supposé
+Modification de la destination pendant la course,suivi,could,yes,no,contradiction dans l'aide
+Choix de la langue (fr ar en),compte,could,yes,no,marché marocain
+Portefeuille électronique,paiement,could,yes,no,selon partenaires
+Course Moto,services,could,yes,no,S05 capture services
+Notifications push à chaque étape,notifications,could,yes,no,supposé
+Ville à ville et covoiturage,services,could,yes,skip,hors tranche choisie
+Livraison coursier et fret,services,could,yes,skip,hors tranche choisie
+inDrive.Money (crédit),services,could,yes,skip,activité financière réglementée
+Réseau de chauffeurs existant,réseau,must,yes,skip,à recruter soi-même
+Prix recommandés appris sur l'historique d'inDrive,données,could,yes,skip,données propriétaires
+Marque logo couleurs illustrations textes,marque,must,yes,skip,à recréer avec /replica-brand
+Statut légal d'agrégateur au Maroc,légal,must,yes,skip,à faire valider par un avocat

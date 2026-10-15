@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+# captures de l’original : référence locale uniquement, jamais publiées
+replica/screens/
