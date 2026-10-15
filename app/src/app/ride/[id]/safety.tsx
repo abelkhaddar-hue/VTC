@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Linking, Platform, Share, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
-import { Ambulance, Contact, Copy, Headset, Link2, Siren } from 'lucide-react-native'
+import { Ambulance, Contact, Copy, LifeBuoy, Link2, Siren } from 'lucide-react-native'
 import { account, rides, type EmergencyContact } from '@/data/api'
 import { useAction, useLoad } from '@/data/hooks'
 import { Screen } from '@/ui/layout'
@@ -49,8 +49,8 @@ export default function Safety() {
       <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
         <ListRow icon={Siren} danger label={`Appeler la police (${police})`} detail="En cas de danger immédiat" onPress={() => Linking.openURL(`tel:${police}`)} />
         <ListRow icon={Ambulance} label={`Appeler le SAMU (${ambulance})`} detail="Urgence médicale" onPress={() => Linking.openURL(`tel:${ambulance}`)} />
-        <ListRow icon={Headset} label="Contacter l’assistance" detail="7 j/7, réponse dans l’app" onPress={() => router.push({ pathname: '/support', params: { ride: id, category: 'safety' } })} />
-        <ListRow icon={Contact} label="Contacts d’urgence" detail={contacts.data?.length ? `${contacts.data.length} enregistré${contacts.data.length > 1 ? 's' : ''}` : 'Aucun pour l’instant'} onPress={() => router.push('/settings')} />
+        <ListRow icon={LifeBuoy} label="Contacter l’assistance" detail="7 j/7, réponse dans l’app" onPress={() => router.push({ pathname: '/support', params: { ride: id, category: 'safety' } })} />
+        <ListRow icon={Contact} label="Contacts d’urgence" detail={contacts.data?.length ? `${contacts.data.length} enregistré${contacts.data.length > 1 ? 's' : ''}` : 'Aucun pour l’instant'} onPress={() => router.push('/contacts')} />
       </Card>
     </Screen>
   )

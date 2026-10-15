@@ -16,7 +16,7 @@ export default function ProfileSetup() {
   return (
     <Screen title="Faisons connaissance" onBack={() => router.replace('/welcome')}
       footer={<Button label="Continuer" size="lg" disabled={!firstName.trim() || !emailOk} loading={save.busy}
-        onPress={async () => { if (await save.run({ firstName: firstName.trim(), email: email.trim() || undefined })) router.replace('/home') }} />}>
+        onPress={async () => { if (await save.run({ firstName: firstName.trim(), email: email.trim() || undefined })) { if (router.canDismiss()) router.dismissAll(); router.replace('/home') } }} />}>
       <Text tone="muted">Les chauffeurs voient seulement votre prénom et votre note.</Text>
       <Field label="Prénom" value={firstName} onChangeText={setFirstName} maxLength={60} autoComplete="given-name" textContentType="givenName" error={save.error} autoFocus />
       <Field label="E-mail (facultatif)" hint="Pour recevoir vos reçus." value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none"

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { router } from 'expo-router'
-import { Trash2, UserMinus } from 'lucide-react-native'
-import { account, demo, type EmergencyContact, type Profile, type Scenario } from '@/data/api'
+import { Contact, Trash2 } from 'lucide-react-native'
+import { account, demo, type Profile, type Scenario } from '@/data/api'
 import { useAction, useLoad } from '@/data/hooks'
 import { Screen, Skeleton } from '@/ui/layout'
 import { Text } from '@/ui/Text'
-import { Button, IconButton } from '@/ui/Button'
-import { Banner, Card, Chip, Divider } from '@/ui/primitives'
+import { Button } from '@/ui/Button'
+import { Banner, Card, Chip, Divider, ListRow } from '@/ui/primitives'
 import { ChoiceList, formatMoroccanPhone } from '@/ui/forms'
 import { Field } from '@/ui/Field'
 
@@ -15,20 +15,16 @@ function Title({ children }: { children: string }) {
   return <Text variant="xs" weight={700} tone="subtle" heading style={{ textTransform: 'uppercase', letterSpacing: 1, marginTop: 8 }}>{children}</Text>
 }
 
-// S19 — Profil et réglages, contacts d'urgence, suppression du compte, mode démo.
+// S19 — Profil et réglages, lien vers les contacts d'urgence, suppression du compte, mode démo.
 export default function Settings() {
   const p = useLoad<Profile>(() => account.profile(), [])
-  const contacts = useLoad<EmergencyContact[]>(() => account.contacts(), [])
   const [firstName, setFirstName] = useState('')
   const [email, setEmail] = useState('')
   const [saved, setSaved] = useState(false)
-  const [cName, setCName] = useState('')
-  const [cPhone, setCPhone] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [scenario, setScenario] = useState<Scenario[]>([demo.scenario])
   const [speed, setSpeed] = useState(demo.speed)
   const save = useAction(account.update)
-  const add = useAction(account.addContact)
   const del = useAction(account.deleteAccount)
 
   useEffect(() => { if (p.data) { setFirstName(p.data.firstName); setEmail(p.data.email ?? '') } }, [p.data])
@@ -62,23 +58,9 @@ export default function Settings() {
         </View>
       </Card>
 
-      <Title>Contacts d’urgence</Title>
-      <Card style={{ gap: 12 }}>
-        <Text variant="sm" tone="muted">Prévenus si vous déclenchez une alerte pendant une course. 5 maximum.</Text>
-        {contacts.data?.map((c) => (
-          <View key={c.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <View style={{ flex: 1 }}>
-              <Text weight={600} numberOfLines={1}>{c.name}</Text>
-              <Text variant="sm" tone="muted">{formatMoroccanPhone('0' + c.phone.slice(4))}</Text>
-            </View>
-            <IconButton icon={UserMinus} variant="ghost" label={`Retirer ${c.name}`} onPress={async () => { await account.removeContact(c.id); contacts.reload() }} />
-          </View>
-        ))}
-        <Divider />
-        <Field label="Nom" value={cName} onChangeText={setCName} maxLength={60} />
-        <Field label="Téléphone" value={formatMoroccanPhone(cPhone)} onChangeText={(v) => setCPhone(v.replace(/\D/g, '').slice(0, 10))} keyboardType="phone-pad" placeholder="06 12 34 56 78" error={add.error} />
-        <Button label="Ajouter ce contact" variant="secondary" loading={add.busy} disabled={!cName.trim() || cPhone.length < 10}
-          onPress={async () => { if (await add.run(cName, cPhone)) { setCName(''); setCPhone(''); contacts.reload() } }} />
+      <Title>Sécurité</Title>
+      <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+        <ListRow icon={Contact} label="Contacts d’urgence" detail="Prévenus en cas d’alerte" onPress={() => router.push('/contacts')} />
       </Card>
 
       <Title>Mode démo (équipe)</Title>

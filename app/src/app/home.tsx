@@ -100,8 +100,8 @@ export default function Home() {
       </View>
       {d.dropoff && !quoteError ? (
         <View style={{ flexDirection: 'row', gap: 8 }}>
-          <SheetRow icon={PayIcon} label="Votre prix" a11y={`Votre prix : ${d.offeredCents ? formatMAD(d.offeredCents) : 'calcul en cours'}, payé en ${payLabels[d.payment]}. Modifier`}
-            value={quoting || !d.offeredCents ? 'Calcul…' : `${formatMAD(d.offeredCents)} · ${payLabels[d.payment]}`} onPress={() => router.push('/fare')} />
+          <SheetRow icon={PayIcon} label={`Votre prix · ${payLabels[d.payment]}`} a11y={`Votre prix : ${d.offeredCents ? formatMAD(d.offeredCents) : 'calcul en cours'}, payé en ${payLabels[d.payment]}. Modifier`}
+            value={quoting || !d.offeredCents ? 'Calcul…' : formatMAD(d.offeredCents)} onPress={() => router.push('/fare')} />
           <SheetRow icon={SlidersHorizontal} label="Options" a11y={`Options et commentaire, ${optionsCount || 'aucune'}. Modifier`}
             value={optionsCount ? `${optionsCount} choisie${optionsCount > 1 ? 's' : ''}` : 'Aucune'} onPress={() => router.push('/options')} />
         </View>

@@ -25,6 +25,7 @@ export default function Code() {
     const s = await verify.run(phone, c)
     if (!s) { setCode(''); return }
     const p = await account.profile()
+    if (router.canDismiss()) router.dismissAll()
     if (p.status === 'blocked') router.replace('/blocked')
     else if (s.isNew || !p.firstName) router.replace('/login/profile')
     else router.replace('/')

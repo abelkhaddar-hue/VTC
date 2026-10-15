@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
-import { FileText, MessageSquareWarning, PackageSearch } from 'lucide-react-native'
+import { FileText, LifeBuoy } from 'lucide-react-native'
 import { account, rides, type RideSummary } from '@/data/api'
 import { useLoad } from '@/data/hooks'
 import { color, formatMAD, tokens } from '@/theme'
@@ -23,7 +23,7 @@ export default function HistoryItem() {
   if (h.loading) return <Loading />
   if (h.error || !h.data) return <Screen title="Course"><ErrorBlock message={h.error?.message ?? 'Course introuvable.'} onRetry={h.reload} /></Screen>
   const r = h.data
-  const report = (category: 'lost_item' | 'price_dispute' | 'other') => router.push({ pathname: '/support', params: { ride: r.id, category } })
+  const report = () => router.push({ pathname: '/support', params: { ride: r.id } })
 
   return (
     <Screen title={formatWhen(r.at)} tone="surface">
@@ -43,8 +43,7 @@ export default function HistoryItem() {
           <ListRow icon={FileText} label="Recevoir le reçu" detail={profile.data?.email ? `Par e-mail à ${profile.data.email}` : 'Ajoutez un e-mail dans les réglages'}
             onPress={() => profile.data?.email ? setReceipt(`Reçu envoyé à ${profile.data.email}.`) : router.push('/settings')} />
         ) : null}
-        <ListRow icon={PackageSearch} label="J’ai oublié un objet" onPress={() => report('lost_item')} />
-        <ListRow icon={MessageSquareWarning} label="Problème de prix ou autre" onPress={() => report('price_dispute')} />
+        <ListRow icon={LifeBuoy} label="Signaler un problème" detail="Objet oublié, prix, comportement…" onPress={report} />
       </Card>
       <View style={{ height: tokens.space[4], backgroundColor: color('surface') }} />
     </Screen>

@@ -1,6 +1,6 @@
 import { View } from 'react-native'
 import { router } from 'expo-router'
-import { CarFront, History, LifeBuoy, LogOut, Palette, Settings, ShieldCheck } from 'lucide-react-native'
+import { CarFront, Contact, History, LifeBuoy, LogOut, Palette, Settings } from 'lucide-react-native'
 import { account, auth, type Profile } from '@/data/api'
 import { useLoad } from '@/data/hooks'
 import { Screen, Skeleton } from '@/ui/layout'
@@ -27,9 +27,9 @@ export default function Menu() {
       <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
         <ListRow icon={CarFront} label="Commander une course" onPress={() => router.replace('/home')} />
         <ListRow icon={History} label="Mes courses" detail="Historique et reçus" onPress={() => router.push('/history')} />
-        <ListRow icon={ShieldCheck} label="Sécurité" detail="Contacts d’urgence" onPress={() => router.push('/settings')} />
+        <ListRow icon={Contact} label="Contacts d’urgence" detail="Prévenus en cas d’alerte" onPress={() => router.push('/contacts')} />
         <ListRow icon={LifeBuoy} label="Aide" detail="Objet oublié, problème de prix…" onPress={() => router.push('/support')} />
-        <ListRow icon={Settings} label="Réglages" detail="Profil, langue, compte" onPress={() => router.push('/settings')} />
+        <ListRow icon={Settings} label="Réglages" detail="Profil, langue, mode démo, compte" onPress={() => router.push('/settings')} />
       </Card>
       <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
         <ListRow icon={Palette} label="Design system" detail="Pour l’équipe : tous les composants" onPress={() => router.push('/design')} />

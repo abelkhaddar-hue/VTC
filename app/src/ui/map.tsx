@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { Pressable, View, type GestureResponderEvent, type LayoutChangeEvent } from 'react-native'
+import { View, type GestureResponderEvent, type LayoutChangeEvent } from 'react-native'
 import { Navigation } from 'lucide-react-native'
 import { color, shadow, tokens } from '@/theme'
 
@@ -31,7 +31,11 @@ export function FakeMap({ pickup, dropoff, driver, me, route, children, label = 
   const xy = (p: LngLat) => ({ x: size.w / 2 + (p.lng - cx) * 0.83 * k, y: size.h / 2 - (p.lat - cy) * k })
 
   const unproject = (x: number, y: number): LngLat => ({ lng: cx + (x - size.w / 2) / (0.83 * k), lat: cy - (y - size.h / 2) / k })
-  const pick = (e: GestureResponderEvent) => onPick?.(unproject(e.nativeEvent.locationX, e.nativeEvent.locationY))
+  const pick = (e: GestureResponderEvent) => {
+    const { locationX, locationY } = e.nativeEvent
+    if (!Number.isFinite(locationX) || !Number.isFinite(locationY)) return
+    onPick?.(unproject(locationX, locationY))
+  }
 
   const segments = (route ?? []).slice(1).map((p, i) => {
     const a = xy(route![i]), b = xy(p)
@@ -79,7 +83,12 @@ export function FakeMap({ pickup, dropoff, driver, me, route, children, label = 
           ) : null}
         </>
       )}
-      {onPick ? <Pressable onPress={pick} accessibilityRole="button" accessibilityLabel="Toucher la carte pour placer le point" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }} /> : null}
+      {onPick ? (
+        // Événements tactiles bruts : ils donnent la position du doigt sur le web comme sur mobile.
+        <View onStartShouldSetResponder={() => true} onResponderRelease={pick}
+          accessibilityRole="button" accessibilityLabel="Toucher la carte pour placer le point"
+          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }} />
+      ) : null}
       <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}>{children}</View>
     </View>
   )

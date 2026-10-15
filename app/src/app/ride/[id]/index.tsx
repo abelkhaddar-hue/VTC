@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
-import { CarTaxiFront, Share2 } from 'lucide-react-native'
+import { CarTaxiFront, ShieldCheck } from 'lucide-react-native'
 import { rides, type RideView } from '@/data/api'
 import { useLoad } from '@/data/hooks'
 import { color, formatMAD, tokens } from '@/theme'
@@ -22,6 +22,7 @@ const cancelLabel: Record<string, string> = {
 export default function RideScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const ride = useLoad<RideView>(() => rides.ride(id), [id], (set) => rides.onRide(id, set))
+  const [callInfo, setCallInfo] = useState(false)
 
   useEffect(() => {
     if (ride.data?.status === 'completed' && !ride.data.rated) router.replace(`/ride/${id}/rate`)
@@ -57,7 +58,7 @@ export default function RideScreen() {
   return (
     <MapScreen map={map} top={
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }} pointerEvents="box-none">
-        <IconButton icon={Share2} label="Partager ma course" onPress={() => router.push(`/ride/${id}/safety`)} />
+        <IconButton icon={ShieldCheck} label="Sécurité et partage du trajet" onPress={() => router.push(`/ride/${id}/safety`)} />
       </View>
     }>
       {inTrip ? (
@@ -69,7 +70,8 @@ export default function RideScreen() {
       <DriverCard name={r.driver.firstName} rating={r.driver.rating} rides={r.driver.rides}
         vehicle={`${r.vehicle.make} ${r.vehicle.model} · ${r.vehicle.color}`} plate={r.vehicle.plate}
         etaMin={enRoute && r.status === 'driver_en_route' ? eta : undefined} arrived={r.status === 'driver_arrived'}
-        onCall={() => router.push({ pathname: '/ride/[id]/chat', params: { id, call: '1' } })} onMessage={() => router.push(`/ride/${id}/chat`)} onSafety={() => router.push(`/ride/${id}/safety`)} />
+        onCall={() => setCallInfo(true)} onMessage={() => router.push(`/ride/${id}/chat`)} onSafety={() => router.push(`/ride/${id}/safety`)} />
+      {callInfo ? <Banner kind="info" title="L’appel masqué arrive bientôt" body="En attendant, écrivez au chauffeur : votre numéro n’est jamais partagé." onDismiss={() => setCallInfo(false)} /> : null}
       {r.status === 'driver_en_route' ? <Banner kind="info" title="Vérifiez la plaque avant de monter" body="Si la voiture ou le chauffeur ne correspondent pas, ne montez pas et annulez." /> : null}
       <Divider />
       <RouteSummary from={r.pickup.name} to={r.dropoff.name} />

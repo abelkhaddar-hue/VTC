@@ -111,7 +111,7 @@ export function FareInput({ cents, recommendedCents, raising }: { cents: number 
         <Text variant="lg" tone="muted">MAD</Text>
       </View>
       <Text variant="sm" tone={below ? 'danger' : 'muted'}>
-        {below ? `Minimum ${formatMAD(recommendedCents)} pour ce trajet` : `Prix conseillé : ${formatMAD(recommendedCents)}`}
+        {below ? `Minimum ${formatMAD(recommendedCents)} pour ce trajet` : raising ? `Au moins ${formatMAD(recommendedCents)}` : `Prix conseillé : ${formatMAD(recommendedCents)}`}
       </Text>
       <Text variant="xs" tone="subtle" center>Péages et frais d'aéroport en plus, payés sur place.</Text>
     </View>

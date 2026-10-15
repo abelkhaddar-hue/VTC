@@ -1,11 +1,26 @@
-import { Stack } from 'expo-router'
+import { useEffect } from 'react'
+import { Stack, router, useSegments } from 'expo-router'
+import { auth } from '@/data/api'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold } from '@expo-google-fonts/inter'
 import { color } from '@/theme'
 
+// Écrans ouverts sans compte : accueil, connexion, lien de suivi partagé, vitrine du design.
+const PUBLIC = new Set(['welcome', 'login', 's', 'design', 'index'])
+
+function useSessionGuard() {
+  const segments = useSegments()
+  const first = (segments[0] as string | undefined) ?? 'index'
+  useEffect(() => {
+    if (!PUBLIC.has(first) && !auth.session()) router.replace('/welcome')
+  }, [first])
+  useEffect(() => auth.onSession((s) => { if (!s) router.replace('/welcome') }), [])
+}
+
 export default function RootLayout() {
   const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold })
+  useSessionGuard()
   if (!loaded) return null
   return (
     <SafeAreaProvider>

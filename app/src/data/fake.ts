@@ -93,11 +93,30 @@ const db = {
   codeAttempts: 3,
 }
 
-const KNOWN_PHONE = '0612345678'
 const BLOCKED_PHONE = '0699999999'
+const STORE_KEY = 'ride-demo-session'
+
+// Sur le web, la session de démo survit au rechargement de la page (la vraie viendra de Supabase Auth).
+function persist() {
+  try {
+    const s = db.session ? { session: db.session, profile: db.profiles.get(db.session.userId) } : null
+    if (s) globalThis.localStorage?.setItem(STORE_KEY, JSON.stringify(s))
+    else globalThis.localStorage?.removeItem(STORE_KEY)
+  } catch { /* stockage indisponible : on reste en mémoire */ }
+}
+function restore() {
+  try {
+    const raw = globalThis.localStorage?.getItem(STORE_KEY)
+    if (!raw) return
+    const { session, profile } = JSON.parse(raw) as { session: Session; profile?: Profile }
+    if (profile) db.profiles.set(profile.id, profile)
+    if (db.profiles.has(session.userId)) db.session = session
+  } catch { /* données illisibles : ignorées */ }
+}
 export const DEMO_CODE = '123456'
 
 db.profiles.set('u_sara', { id: 'u_sara', phone: '+212612345678', firstName: 'Sara', locale: 'fr', rating: 4.8, ratingCount: 41, cityId: 'casa', status: 'active' })
+restore()
 
 function me(): Profile {
   if (!db.session) throw new ApiError('not_authenticated')
@@ -141,11 +160,12 @@ export const auth = {
       })
     }
     db.session = { userId, phone: `+212${digits.slice(1)}`, isNew }
+    persist()
     emit('session', db.session)
     return db.session
   }),
 
-  signOut: async () => { db.session = null; emit('session', null) },
+  signOut: async () => { db.session = null; persist(); emit('session', null) },
 }
 
 export const account = {
@@ -157,6 +177,7 @@ export const account = {
     if (patch.firstName && patch.firstName.length > 60) throw new ApiError('first_name_too_long', '60 caractères maximum.')
     Object.assign(p, patch)
     if (db.session) db.session.isNew = false
+    persist()
     emit('profile', { ...p })
     return { ...p }
   }),
@@ -173,7 +194,7 @@ export const account = {
   removeContact: (cid: string) => call(() => { db.contacts = db.contacts.filter((c) => c.id !== cid) }),
   deleteAccount: () => call(() => {
     const p = me(); p.status = 'blocked'; p.firstName = 'Compte supprimé'
-    db.session = null; emit('session', null)
+    db.session = null; persist(); emit('session', null)
   }),
 }
 
