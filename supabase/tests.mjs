@@ -1,6 +1,10 @@
 import { PGlite } from '@electric-sql/pglite'
 import { postgis } from '@electric-sql/pglite-postgis'
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
+
+// Usage : node tests.mjs <dossier supabase>  — charge migrations + seed + simulateur de dev, puis joue les scénarios.
+const dir = process.argv[2]
 
 const db = await PGlite.create({ extensions: { postgis } })
 const ok = (m) => console.log('  ok  ', m)
@@ -13,18 +17,27 @@ await db.exec(`
   create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;
   create schema auth;
   create table auth.users (id uuid primary key default gen_random_uuid(), phone text, email text);
+  -- même définition que Supabase : claim.sub, sinon le JSON des claims
   create function auth.uid() returns uuid language sql stable as
-    $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+    $$ select coalesce(nullif(current_setting('request.jwt.claim.sub', true), ''),
+                       (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'))::uuid $$;
   grant usage on schema auth, extensions, public to anon, authenticated, service_role;
   grant execute on function auth.uid() to anon, authenticated, service_role;
 `)
-try { await db.exec(readFileSync(process.argv[2], 'utf8')) } catch (e) { console.log('SCHEMA ERROR:', e.message, 'pos', e.position, e.where ?? ''); process.exit(1) }
+const files = [
+  ...readdirSync(join(dir, 'migrations')).filter((f) => f.endsWith('.sql')).sort().map((f) => join(dir, 'migrations', f)),
+  join(dir, 'seed.sql'),
+  join(dir, 'dev', 'simulator.sql'),
+]
+for (const f of files) {
+  try { await db.exec(readFileSync(f, 'utf8')) } catch (e) { console.log('ERREUR SQL', f, ':', e.message, 'pos', e.position, e.where ?? ''); process.exit(1) }
+}
 await db.exec(`
   grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;
   grant usage, select on all sequences in schema public to anon, authenticated, service_role;
   grant execute on all functions in schema extensions to anon, authenticated, service_role;
 `)
-ok('schema chargé')
+ok(`schéma chargé (${files.length} fichiers)`)
 
 const as = async (role, uid, sql, params = []) => {
   await db.exec(`reset role; select set_config('request.jwt.claim.sub', '${uid ?? ''}', false); set role ${role};`)
@@ -36,11 +49,9 @@ const expectErr = async (label, fn, code) => {
 }
 
 // Données : Casablanca, une gamme, un passager, deux chauffeurs
-const [{ id: city }] = (await db.query(`insert into cities (name, service_area, payment_methods, emergency_numbers)
-  values ('Casablanca', st_multi(st_makeenvelope(-7.75, 33.45, -7.45, 33.65, 4326))::geography, '{cash,card}', '{"police":"19"}')
-  returning id`)).rows
-const [{ id: eco }] = (await db.query(`insert into ride_types (city_id, code, name, seats_max, base_fare_cents, per_km_cents, per_min_cents, min_fare_cents)
-  values ($1, 'economy', 'Course', 4, 700, 350, 50, 1500) returning id`, [city])).rows
+// Casablanca et ses gammes viennent de seed.sql
+const [{ id: city }] = (await db.query(`select id from cities where name = 'Casablanca'`)).rows
+const [{ id: eco }] = (await db.query(`select id from ride_types where city_id = $1 and code = 'economy'`, [city])).rows
 const mkUser = async (phone) => (await db.query(`insert into auth.users (phone) values ($1) returning id`, [phone])).rows[0].id
 const pax = await mkUser('+212600000001'), d1 = await mkUser('+212600000002'), d2 = await mkUser('+212600000003'), other = await mkUser('+212600000004')
 await db.query(`update profiles set first_name = 'Sara' where id = $1`, [pax])
@@ -57,16 +68,16 @@ ok('données de départ')
 const rec = (await db.query(`select compute_recommended_fare($1, 5400, 900) f`, [eco])).rows[0].f
 rec === 3400 ? ok('prix recommandé 34 MAD pour 5,4 km / 15 min') : fail('prix recommandé = ' + rec)
 await expectErr('client ne peut pas créer une demande directement',
-  () => as('authenticated', pax, `select create_ride_request($1,$2,-7.6,33.59,'A',-7.55,33.57,'B',5400,900,null,3800,'cash')`, [pax, eco]), 'permission denied')
+  () => as('authenticated', pax, `select create_ride_request($1,$2,-7.6,33.59,'A','',-7.55,33.57,'B','',5400,900,null,3800,'cash')`, [pax, eco]), 'permission denied')
 await expectErr('prix sous le recommandé refusé',
-  () => as('service_role', null, `select create_ride_request($1,$2,-7.6,33.59,'A',-7.55,33.57,'B',5400,900,null,3000,'cash')`, [pax, eco]), 'fare_below_recommended')
+  () => as('service_role', null, `select create_ride_request($1,$2,-7.6,33.59,'A','',-7.55,33.57,'B','',5400,900,null,3000,'cash')`, [pax, eco]), 'fare_below_recommended')
 await expectErr('départ hors zone refusé',
-  () => as('service_role', null, `select create_ride_request($1,$2,-5.0,35.0,'A',-7.55,33.57,'B',5400,900,null,4000,'cash')`, [pax, eco]), 'pickup_outside_service_area')
+  () => as('service_role', null, `select create_ride_request($1,$2,-5.0,35.0,'A','',-7.55,33.57,'B','',5400,900,null,4000,'cash')`, [pax, eco]), 'pickup_outside_service_area')
 const [{ id: req }] = await as('service_role', null,
-  `select (create_ride_request($1,$2,-7.6,33.59,'Mosquée Hassan II',-7.55,33.57,'Morocco Mall',5400,900,null,4000,'cash')).id`, [pax, eco])
+  `select (create_ride_request($1,$2,-7.6,33.59,'Mosquée Hassan II','',-7.55,33.57,'Morocco Mall','',5400,900,null,4000,'cash')).id`, [pax, eco])
 ok('demande créée à 40 MAD')
 await expectErr('deuxième demande simultanée refusée',
-  () => as('service_role', null, `select create_ride_request($1,$2,-7.6,33.59,'A',-7.55,33.57,'B',5400,900,null,4000,'cash')`, [pax, eco]), 'ride_requests_one_searching')
+  () => as('service_role', null, `select create_ride_request($1,$2,-7.6,33.59,'A','',-7.55,33.57,'B','',5400,900,null,4000,'cash')`, [pax, eco]), 'ride_requests_one_searching')
 
 // RLS
 ;(await as('authenticated', other, `select * from ride_requests`)).length === 0 ? ok('un autre utilisateur ne voit pas la demande') : fail('fuite de demande')
@@ -126,7 +137,7 @@ r.d === 1 && r.p === 4 ? ok('notes mises à jour des deux côtés') : fail(JSON.
 
 // Annulations et expiration
 const newReq = async () => (await as('service_role', null,
-  `select (create_ride_request($1,$2,-7.6,33.59,'A',-7.55,33.57,'B',5400,900,null,4000,'cash')).id`, [pax, eco]))[0].id
+  `select (create_ride_request($1,$2,-7.6,33.59,'A','',-7.55,33.57,'B','',5400,900,null,4000,'cash')).id`, [pax, eco]))[0].id
 const req2 = await newReq()
 await as('authenticated', pax, `select cancel_request($1)`, [req2]); ok('annulation avant acceptation')
 for (let i = 0; i < 4; i++) {
@@ -146,6 +157,54 @@ await db.exec(`update offers set expires_at = now() - interval '1 s' where reque
 await as('service_role', null, `select expire_stale()`)
 const ex = (await db.query(`select status from ride_requests where id = $1`, [req3])).rows[0].status
 ex === 'expired' ? ok('tâche d\'expiration ferme demande et offres') : fail('expiration ' + ex)
+
+// ───────── ajouts de la migration app_api ─────────
+const uNew = await mkUser('212611111111')
+const [{ phone }] = (await db.query(`select phone from profiles where id = $1`, [uNew])).rows
+phone === '+212611111111' ? ok('téléphone normalisé en +212…') : fail('téléphone = ' + phone)
+
+for (let i = 0; i < 5; i++) await as('authenticated', pax, `insert into emergency_contacts (user_id, name, phone) values ($1, $2, $3)`, [pax, 'C' + i, '+21260000100' + i])
+await expectErr('6e contact d’urgence refusé', () => as('authenticated', pax, `insert into emergency_contacts (user_id, name, phone) values ($1, 'X', '+212600009999')`, [pax]), 'too_many_contacts')
+
+const nC = (await db.query(`select count(*)::int n from emergency_contacts where user_id = $1`, [pax])).rows[0].n
+nC <= 5 ? ok(`contacts d’urgence plafonnés (${nC})`) : fail('contacts = ' + nC)
+
+const hist = await as('authenticated', pax, `select * from my_rides()`)
+hist.length >= 5 && hist.some((h) => h.status === 'completed' && h.my_stars === 5) && hist.some((h) => h.status === 'cancelled')
+  ? ok(`historique : ${hist.length} courses, note 5 retrouvée`) : fail('historique ' + JSON.stringify(hist.map((h) => [h.status, h.my_stars])))
+;(await as('authenticated', other, `select * from my_rides()`)).length === 0 ? ok('historique vide pour un tiers') : fail('fuite historique')
+
+const recents = await as('authenticated', pax, `select * from my_recent_places()`)
+recents.length >= 1 && new Set(recents.map((r) => r.name)).size === recents.length ? ok(`récents sans doublon (${recents.map((r) => r.name).join(', ')})`) : fail('récents ' + JSON.stringify(recents))
+
+;(await as('authenticated', other, `select * from request_view($1)`, [req])).length === 0 ? ok('request_view : rien pour un tiers') : fail('fuite request_view')
+const rv = (await as('authenticated', pax, `select * from request_view($1)`, [req]))[0]
+rv?.pickup_name === 'Mosquée Hassan II' && rv.service === 'economy' ? ok('request_view : demande + coordonnées') : fail('request_view ' + JSON.stringify(rv))
+
+const rated = (await as('authenticated', pax, `select rated from ride_view($1)`, [ride]))[0]?.rated
+rated === true ? ok('ride_view sait que la course est notée') : fail('rated = ' + rated)
+
+const active = (await as('authenticated', pax, `select my_active_state() s`))[0].s
+typeof active === 'object' && !active.rideId ? ok('reprise : ' + JSON.stringify(active)) : fail('active ' + JSON.stringify(active))
+
+await expectErr('arrivée hors zone refusée',
+  () => as('service_role', null, `select create_ride_request($1,$2,-7.6,33.59,'A','',-5.0,35.0,'B','',5400,900,null,4000,'cash')`, [pax, eco]), 'dropoff_outside_service_area')
+
+// simulateur de dev : réservé à la clé service
+const req4 = await newReq()
+await expectErr('simulateur interdit à un utilisateur', () => as('authenticated', pax, `select sim_driver_offer($1, $2)`, [d1, req4]), 'permission denied')
+await as('service_role', null, `select sim_driver_location($1, -7.601, 33.591, 0::smallint)`, [d2])
+const [{ id: simOffer, kind }] = await as('service_role', null, `select * from sim_driver_offer($1, $2, 4400)`, [d2, req4])
+kind === 'counter' ? ok('simulateur : contre-offre via les vraies règles') : fail('sim kind ' + kind)
+const [{ id: simRide }] = await as('authenticated', pax, `select (accept_offer($1)).id`, [simOffer])
+await as('service_role', null, `select sim_driver_advance($1, $2, 'driver_arrived')`, [d2, simRide])
+await as('service_role', null, `select sim_driver_message($1, $2, 'Je suis là')`, [d2, simRide])
+const msgs = await as('authenticated', pax, `select body from messages where ride_id = $1`, [simRide])
+msgs.length === 1 ? ok('simulateur : statut + message du chauffeur visibles par le passager') : fail('messages ' + JSON.stringify(msgs))
+await as('service_role', null, `select sim_driver_location($1, -7.6005, 33.5905, 10::smallint)`, [d2])
+const loc = await as('authenticated', pax, `select lng, lat from ride_locations where ride_id = $1 order by recorded_at desc limit 1`, [simRide])
+loc.length === 1 && Math.abs(loc[0].lng + 7.6005) < 1e-6 ? ok('position du chauffeur lisible en lng/lat par le passager') : fail('positions ' + JSON.stringify(loc))
+;(await as('authenticated', other, `select * from ride_locations where ride_id = $1`, [simRide])).length === 0 ? ok('positions invisibles pour un tiers') : fail('fuite positions')
 
 console.log(failures ? `\n${failures} échec(s)` : '\nTout passe.')
 process.exit(failures ? 1 : 0)
