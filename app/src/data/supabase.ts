@@ -253,7 +253,7 @@ const toRequest = (r: RequestRow): RideRequest => ({
 
 type OfferRow = {
   offer_id: string; fare_cents: number; kind: Offer['kind']; eta_s: number; distance_m: number; expires_at: string
-  driver_first_name: string; driver_rating: number | null; driver_rides_count: number
+  driver_first_name: string; driver_rating: number | null; driver_rides_count: number; driver_rating_count: number
   vehicle_make: string; vehicle_model: string; vehicle_color: string
 }
 
@@ -264,7 +264,7 @@ type RideRow = {
   route_polyline: string | null; distance_m: number; duration_s: number
   accepted_at: string; arrived_at: string | null; started_at: string | null; completed_at: string | null
   cancelled_at: string | null; cancelled_by: 'passenger' | 'driver' | 'system' | null; cancel_reason: CancelReason | null
-  counterpart_id: string; counterpart_first_name: string; counterpart_rating: number | null; counterpart_rides: number
+  counterpart_id: string; counterpart_first_name: string; counterpart_rating: number | null; counterpart_rides: number; counterpart_rating_count: number
   vehicle_make: string; vehicle_model: string; vehicle_color: string; vehicle_plate: string
   driver_lng: number | null; driver_lat: number | null; driver_heading: number | null; rated: boolean
 }
@@ -280,7 +280,7 @@ const toRide = (r: RideRow): RideView => withEta({
   pickup: { id: `${r.request_id}-p`, name: r.pickup_name, detail: r.pickup_detail, point: { lng: r.pickup_lng, lat: r.pickup_lat } },
   dropoff: { id: `${r.request_id}-d`, name: r.dropoff_name, detail: r.dropoff_detail, point: { lng: r.dropoff_lng, lat: r.dropoff_lat } },
   route: decode(r.route_polyline), distanceM: r.distance_m,
-  driver: { id: r.counterpart_id, firstName: r.counterpart_first_name, rating: r.counterpart_rating, rides: r.counterpart_rides },
+  driver: { id: r.counterpart_id, firstName: r.counterpart_first_name, rating: r.counterpart_rating, rides: r.counterpart_rating_count },
   vehicle: { make: r.vehicle_make, model: r.vehicle_model, color: r.vehicle_color, plate: r.vehicle_plate },
   driverPosition: r.driver_lng != null && r.driver_lat != null ? { lng: r.driver_lng, lat: r.driver_lat, heading: r.driver_heading ?? 0 } : null,
   etaS: null, acceptedAt: r.accepted_at, arrivedAt: r.arrived_at ?? undefined, startedAt: r.started_at ?? undefined,
@@ -326,7 +326,7 @@ const rides: Api['rides'] = {
   offers: async (rid) => (await rpc<OfferRow[]>('request_offers', { p_request: rid })).map((o): Offer => ({
     id: o.offer_id, requestId: rid, fareCents: o.fare_cents, kind: o.kind, etaS: o.eta_s, distanceM: o.distance_m,
     createdAt: new Date(Date.parse(o.expires_at) - 45_000).toISOString(), expiresAt: o.expires_at,
-    driver: { id: o.offer_id, firstName: o.driver_first_name, rating: o.driver_rating, rides: o.driver_rides_count },
+    driver: { id: o.offer_id, firstName: o.driver_first_name, rating: o.driver_rating, rides: o.driver_rating_count },
     vehicle: { make: o.vehicle_make, model: o.vehicle_model, color: o.vehicle_color },
   })),
   onOffers: (rid, fn) => watch('offers', `request_id=eq.${rid}`, ['*'], () => { rides.offers(rid).then(fn).catch(() => {}) }),

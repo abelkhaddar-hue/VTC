@@ -1,3 +1,6 @@
+-- PostGIS est installé dans le schéma « extensions » : on le rend visible pour ce fichier.
+set search_path = public, extensions;
+
 -- Ce dont l'app passager a besoin en plus de la migration initiale.
 -- Chaque fonction ici correspond à une fonction de app/src/data/fake.ts (mêmes règles, mêmes erreurs).
 

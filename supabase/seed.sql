@@ -1,3 +1,6 @@
+-- PostGIS est installé dans le schéma « extensions » : on le rend visible pour ce fichier.
+set search_path = public, extensions;
+
 -- Données de départ : Casablanca et ses gammes. Mêmes valeurs que app/src/data/seed.ts.
 insert into cities (id, name, country_code, currency, timezone, service_area, payment_methods, emergency_numbers, search_radius_m)
 values ('00000000-0000-0000-0000-00000000ca5a', 'Casablanca', 'MA', 'MAD', 'Africa/Casablanca',

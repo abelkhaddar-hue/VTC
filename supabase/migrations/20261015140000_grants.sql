@@ -1,3 +1,6 @@
+-- PostGIS est installé dans le schéma « extensions » : on le rend visible pour ce fichier.
+set search_path = public, extensions;
+
 -- Accès explicites à l'API de données (les nouveaux projets Supabase ne les donnent plus par défaut).
 -- Les règles RLS filtrent ensuite les lignes : un accès ici ne veut pas dire « tout voir ».
 

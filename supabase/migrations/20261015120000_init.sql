@@ -11,6 +11,10 @@
 
 create extension if not exists postgis with schema extensions;
 
+-- PostGIS est installé dans le schéma « extensions » : on le rend visible pour ce fichier.
+set search_path = public, extensions;
+
+
 -- ─────────────────────────── utilitaires ───────────────────────────
 
 create or replace function set_updated_at() returns trigger

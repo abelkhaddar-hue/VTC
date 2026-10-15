@@ -1,3 +1,6 @@
+-- PostGIS est installé dans le schéma « extensions » : on le rend visible pour ce fichier.
+set search_path = public, extensions;
+
 -- OUTIL DE DÉVELOPPEMENT — à n'installer QUE sur le projet de test, jamais en production.
 -- Permet à scripts/simulate-drivers.mjs (clé service) d'agir « en tant que » un chauffeur de test,
 -- en passant par les mêmes fonctions que la future app chauffeur (mêmes règles, mêmes contrôles).

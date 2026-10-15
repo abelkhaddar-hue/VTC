@@ -1,6 +1,29 @@
 # Backend : Supabase
 
-État au 2026-10-15 : **tout le code est écrit et testé en local, aucun projet Supabase n'est encore branché.** Les comptes (Supabase, Twilio, Google) sont à créer par vous ; ensuite le branchement prend une quinzaine de minutes.
+État au 2026-10-15 : **branché sur le projet de test `ride-test`** (réf. `tziroqkcqlkyciyuvvql`, région Irlande). 5 migrations envoyées, données de Casablanca, réglages SMS, 4 Edge Functions déployées, simulateur et 5 chauffeurs de test installés.
+
+### Vérifié de bout en bout sur le vrai projet (navigateur, 2 courses complètes)
+
+- connexion par SMS avec le numéro de test 06 12 34 56 78 (code 123456, aucun SMS envoyé) → compte créé, prénom demandé ;
+- accueil : gammes lues en base ; localisation refusée → message et départ à choisir à la main ;
+- recherche d'adresse (Edge Function `places`, lieux connus) et récents lus en base ;
+- devis (Edge Function `quote`) : 9 km, 52 MAD conseillés ;
+- demande créée (Edge Function `create-request`) → 3 offres reçues **en temps réel** du simulateur, dont une contre-offre ;
+- acceptation → chauffeur en route → arrivé → course (heure d'arrivée qui baisse avec les positions en temps réel) → terminée → écran de note automatique ;
+- messagerie en temps réel : message envoyé, réponse du chauffeur reçue ;
+- note 5 étoiles enregistrée et visible dans l'historique (lu en base, résiste au rechargement) ;
+- aucune erreur dans la console.
+
+### Corrigé pendant le branchement
+
+- les migrations ne voyaient pas PostGIS (schéma `extensions`) : `set search_path` ajouté en tête de chaque fichier ;
+- la bibliothèque Supabase des Edge Functions passe par npm au lieu de jsr.io (délai dépassé au déploiement) ;
+- badge « Nouveau » affiché pour tous les chauffeurs : l'app comptait les courses au lieu des avis (migration `20261015150000_rating_counts.sql`).
+
+### À surveiller
+
+- **acceptation lente** : 6 à 9 s entre « Accepter » et l'écran du chauffeur sur la 2e course. Cause non identifiée (offre gratuite, région Irlande, ou deux appels successifs) : à mesurer.
+- 1re course : l'app est revenue à l'accueil au lieu de l'écran de note ; non reproduit à la 2e course (écran de note affiché et stable). Probablement un clic dans l'onglet partagé, sans certitude.
 
 ## Ce qui existe
 
