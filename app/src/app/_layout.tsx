@@ -6,6 +6,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold } from '@expo-google-fonts/inter'
 import { color } from '@/theme'
 
+const FONTS_INLINED = !!(globalThis as { __RIDE_FONTS_INLINED__?: boolean }).__RIDE_FONTS_INLINED__
+
 // Écrans ouverts sans compte : accueil, connexion, lien de suivi partagé, vitrine du design.
 const PUBLIC = new Set(['welcome', 'login', 's', 'design', 'index'])
 
@@ -19,7 +21,8 @@ function useSessionGuard(ready: boolean) {
 }
 
 export default function RootLayout() {
-  const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold })
+  // Version web autonome (lien de démo) : les polices sont déjà embarquées dans la page.
+  const [loaded] = useFonts(FONTS_INLINED ? {} : { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold })
   const [sessionReady, setSessionReady] = useState(false)
   useEffect(() => { auth.ready().catch(() => {}).finally(() => setSessionReady(true)) }, [])
   useSessionGuard(sessionReady)
