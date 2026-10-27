@@ -4,6 +4,16 @@
 >
 > Règles Base appliquées : noir = action principale ; grilles et espacements en multiples de 4 ; marges 16 ; barre du haut 48 ; rayons 4 / 8 / 12 / 16 ; **pas d'ombre pour séparer des cartes** (bordure ou fond), ombre seulement pour ce qui flotte (panneau sur la carte, boutons sur la carte, dialogues).
 
+## Détails repris de Base Web (baseui 18.2.0, MIT) — 2026-10-27
+
+| composant | règle |
+| --- | --- |
+| Bouton | petit 36 / normal 48 / grand 56 ; marges 12 / 16 / 20 ; libellé 14/16, 16/20, 18/24 en graisse 500 ; primaire noir (appui `#333333`), secondaire gris `#f3f3f3` (appui `#e0e0e0`), discret transparent, danger `#de1135` ; **désactivé = fond gris + texte gris**, plus de transparence ; focus clavier : anneau bleu 3 px |
+| Champ (`inputFrame`) | hauteur 48, rayon 8 ; repos : fond `#f3f3f3` ; saisie : fond blanc + bordure noire 2 px ; erreur : fond blanc + bordure rouge 2 px ; désactivé : gris. **Écart** : au repos, bordure fine `border-input` (Base la rend invisible) pour rester repérable (WCAG 1.4.11). Le texte ne bouge pas quand la bordure change d'épaisseur. |
+| Champ d'adresse | fond gris, sans bordure (il affiche toujours un texte) ; rouge 2 px en erreur |
+| Ligne de liste (`ListRow`, `ListGroup`) | hauteur 64, icône dans une colonne de 64, libellé 16/20 graisse 500, précision 14/20 ; séparateur 1 px aligné sur le texte |
+| Panneau du bas | coins 16 en haut, poignée 48 × 4 en pilule, titres 18/24 graisse 500 |
+
 Source des valeurs : `tokens.json` (jamais de couleur en dur dans un composant).
 Code : `app/src/ui/`. Vitrine : route `/design` de l'app (`app/src/app/design.tsx`).
 

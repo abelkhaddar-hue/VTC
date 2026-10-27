@@ -7,7 +7,7 @@ import { useLoad } from '@/data/hooks'
 import { color, formatMAD, tokens } from '@/theme'
 import { ErrorBlock, Loading, Screen } from '@/ui/layout'
 import { Text } from '@/ui/Text'
-import { Banner, Card, Divider, ListRow } from '@/ui/primitives'
+import { Banner, Card, Divider, ListGroup, ListRow } from '@/ui/primitives'
 import { RouteSummary } from '@/ui/ride'
 import { formatWhen } from '@/ui/format'
 
@@ -38,13 +38,13 @@ export default function HistoryItem() {
         {r.myStars ? <Text variant="sm" tone="muted">Votre note : {'★'.repeat(r.myStars)}{'☆'.repeat(5 - r.myStars)}</Text> : null}
       </Card>
       {receipt ? <Banner kind="success" title={receipt} /> : null}
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+      <ListGroup>
         {r.status === 'completed' ? (
           <ListRow icon={FileText} label="Recevoir le reçu" detail={profile.data?.email ? `Par e-mail à ${profile.data.email}` : 'Ajoutez un e-mail dans les réglages'}
             onPress={() => profile.data?.email ? setReceipt(`Reçu envoyé à ${profile.data.email}.`) : router.push('/settings')} />
         ) : null}
         <ListRow icon={LifeBuoy} label="Signaler un problème" detail="Objet oublié, prix, comportement…" onPress={report} />
-      </Card>
+      </ListGroup>
       <View style={{ height: tokens.space[4], backgroundColor: color('surface') }} />
     </Screen>
   )

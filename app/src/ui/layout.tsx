@@ -49,7 +49,7 @@ export function MapScreen({ map, children, top }: { map: ReactNode; children: Re
       ) : null}
       <SafeAreaView edges={['bottom']} style={[{ backgroundColor: color('bg'), borderTopLeftRadius: tokens.radius.xl, borderTopRightRadius: tokens.radius.xl, marginTop: -tokens.radius.xl }, shadow('sheet')]}>
         <View style={[column, { padding: tokens.layout.gutter, paddingTop: 8, gap: 16 }]}>
-          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{ alignSelf: 'center', width: 40, height: tokens.layout['sheet-handle'], borderRadius: 2, backgroundColor: color('border'), marginBottom: 4 }} />
+          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{ alignSelf: 'center', width: tokens.size['sheet-handle-width'], height: tokens.layout['sheet-handle'], borderRadius: tokens.radius.pill, backgroundColor: color('border'), marginBottom: 4 }} />
           {children}
         </View>
       </SafeAreaView>

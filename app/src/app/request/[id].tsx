@@ -91,7 +91,7 @@ export default function RequestScreen() {
         </View>
       ) : (
         <View style={{ gap: 8 }}>
-          <Text variant="lg" heading accessibilityLiveRegion="polite">{live.length} offre{live.length > 1 ? 's' : ''} pour {formatMAD(r.offeredCents)}</Text>
+          <Text variant="label-lg" heading accessibilityLiveRegion="polite">{live.length} offre{live.length > 1 ? 's' : ''} pour {formatMAD(r.offeredCents)}</Text>
           <ScrollView style={{ maxHeight: 420 }} contentContainerStyle={{ gap: 12, paddingBottom: 4 }}>
             {live.map((o) => (
               <LiveOffer key={o.id} offer={o} accepting={accepting === o.id} disabled={!!accepting && accepting !== o.id}

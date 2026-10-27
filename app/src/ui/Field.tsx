@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { TextInput, View, type TextInputProps } from 'react-native'
-import { color, focusRing, tokens, typeStyle } from '@/theme'
+import { color, tokens, typeStyle } from '@/theme'
+import { inputFrame } from './inputFrame'
 import { Text } from './Text'
 
 // Champ texte avec libellé, aide, erreur et compteur optionnel.
 export function Field({ label, hint, error, counter, multiline, style, onFocus, onBlur, ...rest }: TextInputProps & { label: string; hint?: string; error?: string; counter?: boolean }) {
   const [focused, setFocused] = useState(false)
   const len = String(rest.value ?? '').length
+  // la bordure noire 2 px tient lieu d'indicateur de focus (contraste 21:1)
+  const frame = inputFrame({ focused, error: !!error, disabled: rest.editable === false })
   return (
     <View style={{ gap: 6 }}>
       <Text variant="sm" weight={500}>{label}</Text>
@@ -20,12 +23,11 @@ export function Field({ label, hint, error, counter, multiline, style, onFocus, 
         onBlur={(e) => { setFocused(false); onBlur?.(e) }}
         style={[
           typeStyle('base'),
+          frame.style,
           {
-            minHeight: multiline ? 96 : 52, paddingHorizontal: 16, paddingVertical: multiline ? 12 : 0, borderRadius: tokens.radius.md, borderWidth: 1,
-            borderColor: error ? color('danger') : focused ? color('accent') : color('border-input'), color: color('text'), backgroundColor: color('bg'),
-            textAlignVertical: multiline ? 'top' : 'center', outlineStyle: 'none',
+            minHeight: multiline ? 96 : tokens.size.input, paddingHorizontal: 14 + frame.inset, paddingVertical: multiline ? 10 + frame.inset : 0,
+            color: color(rest.editable === false ? 'disabled-text' : 'text'), textAlignVertical: multiline ? 'top' : 'center', outlineStyle: 'none',
           } as object,
-          focused && (focusRing as object),
           style,
         ]}
       />

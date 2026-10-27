@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import { TextInput, View } from 'react-native'
 import { Check, Send, Star } from 'lucide-react-native'
-import { color, focusRing, tokens, typeStyle } from '@/theme'
+import { color, tokens, typeStyle } from '@/theme'
+import { inputFrame } from './inputFrame'
 import { Text } from './Text'
 import { Touchable } from './Pressable'
 import { Chip } from './primitives'
@@ -90,15 +91,12 @@ export const isMoroccanMobile = (digits: string) => /^0[67]\d{8}$/.test(digits.r
 
 export function PhoneInput({ value, onChange, error, disabled }: { value: string; onChange: (v: string) => void; error?: string; disabled?: boolean }) {
   const [focused, setFocused] = useState(false)
+  const phone = inputFrame({ focused, error: !!error, disabled })
   return (
     <View style={{ gap: 6 }}>
       <Text variant="sm" weight={500}>Numéro de téléphone</Text>
-      <View style={[
-        { flexDirection: 'row', alignItems: 'center', height: 56, borderRadius: tokens.radius.md, borderWidth: 1, backgroundColor: color('bg'), opacity: disabled ? 0.5 : 1,
-          borderColor: error ? color('danger') : focused ? color('accent') : color('border-input') },
-        focused && (focusRing as object),
-      ]}>
-        <View style={{ paddingHorizontal: 16, height: '100%', justifyContent: 'center', borderRightWidth: 1, borderRightColor: color('border') }}>
+      <View style={[phone.style, { flexDirection: 'row', alignItems: 'center', height: tokens.size.input }]}>
+        <View style={{ paddingLeft: 14 + phone.inset, paddingRight: 14, height: '100%', justifyContent: 'center', borderRightWidth: 1, borderRightColor: color('border') }}>
           <Text weight={600} accessibilityLabel="Indicatif Maroc, plus 2 1 2">+212</Text>
         </View>
         <TextInput
@@ -114,7 +112,7 @@ export function PhoneInput({ value, onChange, error, disabled }: { value: string
           placeholderTextColor={color('text-subtle')}
           accessibilityLabel="Numéro de téléphone"
           accessibilityHint={error}
-          style={[typeStyle('lg', 500), { flex: 1, paddingHorizontal: 16, color: color('text'), outlineStyle: 'none' } as object]}
+          style={[typeStyle('base'), { flex: 1, paddingHorizontal: 14, color: color(disabled ? 'disabled-text' : 'text'), outlineStyle: 'none' } as object]}
         />
       </View>
       {error ? <Text variant="sm" tone="danger">{error}</Text> : null}
@@ -133,8 +131,8 @@ export function CodeInput({ value, onChange, length = 6, error, resendIn }: { va
           const active = focused && i === Math.min(value.length, length - 1)
           return (
             <View key={i} style={{
-              flex: 1, maxWidth: 48, height: 56, borderRadius: tokens.radius.md, borderWidth: active ? 2 : 1, alignItems: 'center', justifyContent: 'center', backgroundColor: color('surface'),
-              borderColor: error ? color('danger') : active ? color('accent') : color('border-input'),
+              ...inputFrame({ focused: active, error: !!error }).style,
+              flex: 1, maxWidth: 48, height: 56, alignItems: 'center', justifyContent: 'center',
             }}>
               <Text variant="xl" tabular>{value[i] ?? ''}</Text>
             </View>
@@ -185,6 +183,8 @@ export function ChatBubble({ from, text, status }: { from: 'me' | 'them' | 'syst
 
 export function Composer({ onSend, quick = ['J’arrive', 'Je suis devant', 'Pouvez-vous m’appeler ?'] }: { onSend: (t: string) => void; quick?: string[] }) {
   const [text, setText] = useState('')
+  const [composerFocused, setComposerFocused] = useState(false)
+  const composer = inputFrame({ focused: composerFocused })
   const send = (t: string) => { if (t.trim()) { onSend(t.trim()); setText('') } }
   return (
     <View style={{ gap: 8 }}>
@@ -199,7 +199,9 @@ export function Composer({ onSend, quick = ['J’arrive', 'Je suis devant', 'Pou
           placeholderTextColor={color('text-subtle')}
           accessibilityLabel="Message"
           onSubmitEditing={() => send(text)}
-          style={[typeStyle('base'), { flex: 1, height: 48, paddingHorizontal: 20, borderRadius: tokens.radius.pill, backgroundColor: color('surface'), color: color('text'), borderWidth: 1, borderColor: color('border') }]}
+          onFocus={() => setComposerFocused(true)}
+          onBlur={() => setComposerFocused(false)}
+          style={[typeStyle('base'), composer.style, { flex: 1, height: tokens.size.input, paddingHorizontal: 18 + composer.inset, borderRadius: tokens.radius.pill, color: color('text'), outlineStyle: 'none' } as object]}
         />
         <Touchable
           onPress={() => send(text)}
@@ -207,9 +209,9 @@ export function Composer({ onSend, quick = ['J’arrive', 'Je suis devant', 'Pou
           accessibilityRole="button"
           accessibilityLabel="Envoyer"
           accessibilityState={{ disabled: !text.trim() }}
-          style={{ width: 48, height: 48, borderRadius: tokens.radius.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: color('accent'), opacity: text.trim() ? 1 : 0.4 }}
+          style={{ width: 48, height: 48, borderRadius: tokens.radius.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: color(text.trim() ? 'accent' : 'disabled-bg') }}
         >
-          <Send size={20} color={color('on-accent')} />
+          <Send size={20} color={color(text.trim() ? 'on-accent' : 'disabled-text')} />
         </Touchable>
       </View>
     </View>

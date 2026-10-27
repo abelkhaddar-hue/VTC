@@ -25,9 +25,8 @@ export function AddressField({ kind, value, placeholder, error, onPress, onPickO
           accessibilityLabel={`${label} : ${value ?? 'à choisir'}`}
           style={({ pressed }) => ({
             flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingHorizontal: 16,
-            borderRadius: tokens.radius.md, borderWidth: 1,
-            borderColor: error ? color('danger') : pressed ? color('border-input') : color('border'),
-            backgroundColor: color('surface'),
+            borderRadius: tokens.radius.md, borderWidth: error ? 2 : 0, borderColor: color('danger'),
+            backgroundColor: pressed ? color('surface-pressed') : color('surface'),
           })}
         >
           <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: color(kind === 'pickup' ? 'marker-pickup' : 'marker-dropoff') }} />
@@ -265,7 +264,7 @@ export function DriverCard({ name, rating, rides, vehicle, plate, etaMin, arrive
           <Text weight={600} tone="success">Votre chauffeur est arrivé</Text>
         </View>
       ) : etaMin != null ? (
-        <Text variant="lg" heading accessibilityLiveRegion="polite">Arrive dans {etaMin} min</Text>
+        <Text variant="label-lg" heading accessibilityLiveRegion="polite">Arrive dans {etaMin} min</Text>
       ) : null}
       <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
         <Avatar name={name} size="lg" />
@@ -346,7 +345,7 @@ export function BottomSheetFrame({ children }: { children: ReactNode }) {
   return (
     <View style={[{ backgroundColor: color('bg'), borderTopLeftRadius: tokens.radius.xl, borderTopRightRadius: tokens.radius.xl, padding: 16, paddingTop: 8, gap: 16 }, shadow('sheet')]}>
       <Touchable accessibilityRole="button" accessibilityLabel="Agrandir le panneau" style={{ alignSelf: 'center', paddingVertical: 8, paddingHorizontal: 24 }}>
-        <View style={{ width: 40, height: tokens.layout['sheet-handle'], borderRadius: 2, backgroundColor: color('border') }} />
+        <View style={{ width: tokens.size['sheet-handle-width'], height: tokens.layout['sheet-handle'], borderRadius: tokens.radius.pill, backgroundColor: color('border') }} />
       </Touchable>
       {children}
     </View>

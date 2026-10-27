@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { Children, Fragment, useState, type ReactNode } from 'react'
 import { Image, View, type ViewStyle } from 'react-native'
 import { ChevronRight, CircleAlert, CircleCheck, Info, Star, TriangleAlert, X, type LucideIcon } from 'lucide-react-native'
 import { color, formatRating, shadow, tokens, type ColorRole } from '@/theme'
@@ -129,21 +129,39 @@ export function EmptyState({ icon: Icon, title, body, action }: { icon: LucideIc
   )
 }
 
+// Ligne de liste Base Web : hauteur 64, icône dans une colonne de 64, libellé 16/20 graisse 500.
 export function ListRow({ icon: Icon, label, detail, onPress, danger, trailing }: { icon: LucideIcon; label: string; detail?: string; onPress?: () => void; danger?: boolean; trailing?: ReactNode }) {
   return (
     <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={detail ? `${label}, ${detail}` : label}
-      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 16, minHeight: 56, paddingHorizontal: 16, borderRadius: tokens.radius.md, backgroundColor: pressed ? color('surface') : 'transparent' })}
+      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', minHeight: tokens.size['list-row'], paddingRight: 16, backgroundColor: pressed ? color('surface') : 'transparent' })}
     >
-      <Icon size={tokens.size['icon-lg']} color={danger ? color('danger') : color('text')} />
-      <View style={{ flex: 1 }}>
-        <Text weight={500} tone={danger ? 'danger' : 'default'}>{label}</Text>
+      <View style={{ width: tokens.size.artwork, alignItems: 'center' }}>
+        <Icon size={tokens.size['icon-lg']} color={danger ? color('danger') : color('text')} />
+      </View>
+      <View style={{ flex: 1, paddingVertical: 12, gap: 2 }}>
+        <Text variant="label" tone={danger ? 'danger' : 'default'}>{label}</Text>
         {detail ? <Text variant="sm" tone="muted">{detail}</Text> : null}
       </View>
       {trailing ?? <ChevronRight size={tokens.size.icon} color={color('text-subtle')} />}
     </Touchable>
+  )
+}
+
+// Groupe de lignes : bordure fine autour, séparateur entre les lignes aligné sur le texte (pas sous l'icône).
+export function ListGroup({ children }: { children: ReactNode }) {
+  const rows = Children.toArray(children).filter(Boolean)
+  return (
+    <View style={{ backgroundColor: color('bg'), borderRadius: tokens.radius.lg, borderWidth: 1, borderColor: color('border'), overflow: 'hidden' }}>
+      {rows.map((row, i) => (
+        <Fragment key={i}>
+          {i > 0 ? <View style={{ height: 1, marginLeft: tokens.size.artwork, backgroundColor: color('border') }} /> : null}
+          {row}
+        </Fragment>
+      ))}
+    </View>
   )
 }
 

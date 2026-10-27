@@ -11,7 +11,7 @@ export const tokens = {
     "text-muted": "#4b4b4b",
     "text-subtle": "#5e5e5e",
     "accent": "#000000",
-    "accent-pressed": "#282828",
+    "accent-pressed": "#333333",
     "accent-soft": "#e8e8e8",
     "on-accent": "#ffffff",
     "on-accent-soft": "#000000",
@@ -28,7 +28,11 @@ export const tokens = {
     "overlay": "#000000",
     "marker-pickup": "#000000",
     "marker-dropoff": "#276ef1",
-    "route": "#000000"
+    "route": "#000000",
+    "surface-pressed": "#e0e0e0",
+    "disabled-bg": "#f3f3f3",
+    "disabled-text": "#a6a6a6",
+    "danger-fill": "#de1135"
   },
   "font": {
     "sans": "Inter",
@@ -65,6 +69,21 @@ export const tokens = {
       "size": 36,
       "line": 44,
       "weight": 700
+    },
+    "label-sm": {
+      "size": 14,
+      "line": 16,
+      "weight": 500
+    },
+    "label": {
+      "size": 16,
+      "line": 20,
+      "weight": 500
+    },
+    "label-lg": {
+      "size": 18,
+      "line": 24,
+      "weight": 500
     }
   },
   "space": [
@@ -112,7 +131,11 @@ export const tokens = {
     "avatar-md": 44,
     "avatar-lg": 64,
     "icon": 20,
-    "icon-lg": 24
+    "icon-lg": 24,
+    "input": 48,
+    "list-row": 64,
+    "artwork": 64,
+    "sheet-handle-width": 48
   },
   "layout": {
     "gutter": 16,
@@ -138,7 +161,8 @@ export const tokens = {
     "espacements": "base.uber.com Dimensions : multiples de 4, marges 16, barre de navigation 44 (iOS) / 48 (Android)",
     "rayons": "base.uber.com Corner radius 1.0 : 4, 8, 12, 16 selon la taille du composant",
     "elevation": "base.uber.com Elevation 1.0 : ombres seulement pour ce qui flotte (panneau sur carte, dialogue, bouton sur carte) ; pas d'ombre pour séparer des cartes",
-    "mouvement": "baseui themes/shared/animation : 100 / 200 / 300 ms, easeDecelerate"
+    "mouvement": "baseui themes/shared/animation : 100 / 200 / 300 ms, easeDecelerate",
+    "composants": "baseui 18.2.0 (MIT) : button (tailles, marges, voiles d'appui, désactivé), input (fond, bordure 2 px, focus noir, erreur), list (ligne 64, colonne d'icône 64, séparateur), sheet (rayon 16, poignée 48 × 4, titre LabelLarge)"
   }
 } as const
 

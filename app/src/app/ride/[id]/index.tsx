@@ -63,7 +63,7 @@ export default function RideScreen() {
     }>
       {inTrip ? (
         <View style={{ gap: 4 }}>
-          <Text variant="lg" heading accessibilityLiveRegion="polite">Arrivée dans {eta ?? '…'} min</Text>
+          <Text variant="label-lg" heading accessibilityLiveRegion="polite">Arrivée dans {eta ?? '…'} min</Text>
           <Text variant="sm" tone="muted" numberOfLines={1}>Vers {r.dropoff.name}</Text>
         </View>
       ) : null}

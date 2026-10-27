@@ -28,7 +28,11 @@ module.exports = {
     "overlay": "rgb(var(--color-overlay) / <alpha-value>)",
     "marker-pickup": "rgb(var(--color-marker-pickup) / <alpha-value>)",
     "marker-dropoff": "rgb(var(--color-marker-dropoff) / <alpha-value>)",
-    "route": "rgb(var(--color-route) / <alpha-value>)"
+    "route": "rgb(var(--color-route) / <alpha-value>)",
+    "surface-pressed": "rgb(var(--color-surface-pressed) / <alpha-value>)",
+    "disabled-bg": "rgb(var(--color-disabled-bg) / <alpha-value>)",
+    "disabled-text": "rgb(var(--color-disabled-text) / <alpha-value>)",
+    "danger-fill": "rgb(var(--color-danger-fill) / <alpha-value>)"
   },
   "borderRadius": {
     "sm": "var(--radius-sm)",
@@ -90,6 +94,27 @@ module.exports = {
       {
         "lineHeight": "44px",
         "fontWeight": "700"
+      }
+    ],
+    "label-sm": [
+      "14px",
+      {
+        "lineHeight": "16px",
+        "fontWeight": "500"
+      }
+    ],
+    "label": [
+      "16px",
+      {
+        "lineHeight": "20px",
+        "fontWeight": "500"
+      }
+    ],
+    "label-lg": [
+      "18px",
+      {
+        "lineHeight": "24px",
+        "fontWeight": "500"
       }
     ]
   },

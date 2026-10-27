@@ -7,7 +7,7 @@ import { useAction, useLoad } from '@/data/hooks'
 import { Screen, Skeleton } from '@/ui/layout'
 import { Text } from '@/ui/Text'
 import { Button } from '@/ui/Button'
-import { Banner, Card, Chip, Divider, ListRow } from '@/ui/primitives'
+import { Banner, Card, Chip, Divider, ListGroup, ListRow } from '@/ui/primitives'
 import { ChoiceList, formatMoroccanPhone } from '@/ui/forms'
 import { Field } from '@/ui/Field'
 
@@ -59,9 +59,9 @@ export default function Settings() {
       </Card>
 
       <Title>Sécurité</Title>
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+      <ListGroup>
         <ListRow icon={Contact} label="Contacts d’urgence" detail="Prévenus en cas d’alerte" onPress={() => router.push('/contacts')} />
-      </Card>
+      </ListGroup>
 
       {dataSource === 'fake' ? (
         <>

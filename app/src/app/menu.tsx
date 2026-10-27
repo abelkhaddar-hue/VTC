@@ -5,7 +5,7 @@ import { account, auth, type Profile } from '@/data/api'
 import { useLoad } from '@/data/hooks'
 import { Screen, Skeleton } from '@/ui/layout'
 import { Text } from '@/ui/Text'
-import { Avatar, Card, ListRow, RatingBadge } from '@/ui/primitives'
+import { Avatar, Card, ListGroup, ListRow, RatingBadge } from '@/ui/primitives'
 
 // S17 — Menu latéral (écran plein sur mobile).
 export default function Menu() {
@@ -24,17 +24,17 @@ export default function Menu() {
           </>
         ) : <View style={{ flex: 1 }}><Skeleton height={64} /></View>}
       </Card>
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+      <ListGroup>
         <ListRow icon={CarFront} label="Commander une course" onPress={() => router.replace('/home')} />
         <ListRow icon={History} label="Mes courses" detail="Historique et reçus" onPress={() => router.push('/history')} />
         <ListRow icon={Contact} label="Contacts d’urgence" detail="Prévenus en cas d’alerte" onPress={() => router.push('/contacts')} />
         <ListRow icon={LifeBuoy} label="Aide" detail="Objet oublié, problème de prix…" onPress={() => router.push('/support')} />
         <ListRow icon={Settings} label="Réglages" detail="Profil, langue, mode démo, compte" onPress={() => router.push('/settings')} />
-      </Card>
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+      </ListGroup>
+      <ListGroup>
         <ListRow icon={Palette} label="Design system" detail="Pour l’équipe : tous les composants" onPress={() => router.push('/design')} />
         <ListRow icon={LogOut} label="Se déconnecter" danger trailing={<View />} onPress={async () => { await auth.signOut(); router.replace('/welcome') }} />
-      </Card>
+      </ListGroup>
     </Screen>
   )
 }

@@ -7,7 +7,7 @@ import { useAction, useLoad } from '@/data/hooks'
 import { Screen } from '@/ui/layout'
 import { Text } from '@/ui/Text'
 import { Button } from '@/ui/Button'
-import { Banner, Card, ListRow } from '@/ui/primitives'
+import { Banner, Card, ListGroup, ListRow } from '@/ui/primitives'
 
 // S13 — Centre de sécurité pendant la course.
 export default function Safety() {
@@ -46,12 +46,12 @@ export default function Safety() {
         {share.error ? <Banner kind="danger" title={share.error} /> : null}
         {contacts.data?.length ? <Text variant="xs" tone="subtle">Vos contacts d’urgence ({contacts.data.map((c) => c.name).join(', ')}) seront prévenus si vous appelez les secours.</Text> : null}
       </Card>
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+      <ListGroup>
         <ListRow icon={Siren} danger label={`Appeler la police (${police})`} detail="En cas de danger immédiat" onPress={() => Linking.openURL(`tel:${police}`)} />
         <ListRow icon={Ambulance} label={`Appeler le SAMU (${ambulance})`} detail="Urgence médicale" onPress={() => Linking.openURL(`tel:${ambulance}`)} />
         <ListRow icon={LifeBuoy} label="Contacter l’assistance" detail="7 j/7, réponse dans l’app" onPress={() => router.push({ pathname: '/support', params: { ride: id, category: 'safety' } })} />
         <ListRow icon={Contact} label="Contacts d’urgence" detail={contacts.data?.length ? `${contacts.data.length} enregistré${contacts.data.length > 1 ? 's' : ''}` : 'Aucun pour l’instant'} onPress={() => router.push('/contacts')} />
-      </Card>
+      </ListGroup>
     </Screen>
   )
 }

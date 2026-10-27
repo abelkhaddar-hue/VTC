@@ -7,7 +7,7 @@ import {
 import { color, tokens, type ColorRole } from '@/theme'
 import { Text } from '@/ui/Text'
 import { Button, IconButton } from '@/ui/Button'
-import { Avatar, Banner, Card, Divider, EmptyState, ListRow, PlateBadge, RatingBadge } from '@/ui/primitives'
+import { Avatar, Banner, Card, Divider, EmptyState, ListGroup, ListRow, PlateBadge, RatingBadge } from '@/ui/primitives'
 import {
   AddressField, BottomSheetFrame, DriverCard, FareInput, Keypad, MapPlaceholder, OfferCard, PaymentPicker,
   RouteSummary, SearchingPulse, ServiceTabs, type Offer, type PaymentMethod, type ServiceCode,
@@ -235,7 +235,7 @@ export default function DesignScreen() {
         </Section>
 
         <Section id="menu" title="Menu et sécurité (S13, S17)">
-          <Card style={{ paddingHorizontal: 0, paddingVertical: 8 }}>
+          <ListGroup>
             <ListRow icon={UserRound} label="Mon profil" detail="Sara · 4,8" />
             <ListRow icon={History} label="Mes courses" />
             <ListRow icon={Share2} label="Partager ma course" detail="Envoyer un lien de suivi" />
@@ -243,7 +243,7 @@ export default function DesignScreen() {
             <ListRow icon={LifeBuoy} label="Aide" />
             <ListRow icon={Settings} label="Réglages" />
             <ListRow icon={Trash2} label="Supprimer mon compte" danger />
-          </Card>
+          </ListGroup>
         </Section>
 
         <Section id="vide" title="État vide (S18)">

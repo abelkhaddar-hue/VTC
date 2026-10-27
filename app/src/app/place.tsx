@@ -5,7 +5,8 @@ import { router, useLocalSearchParams } from 'expo-router'
 import { Building2, Clock, Landmark, LocateFixed, Map as MapIcon, MapPin, Search, ShoppingBag, TrainFront, X, type LucideIcon } from 'lucide-react-native'
 import { geo, type LngLat, type Place } from '@/data/api'
 import { draft } from '@/data/draft'
-import { color, focusRing, tokens, typeStyle } from '@/theme'
+import { color, tokens, typeStyle } from '@/theme'
+import { inputFrame } from '@/ui/inputFrame'
 import { Text } from '@/ui/Text'
 import { Button, IconButton } from '@/ui/Button'
 import { Touchable } from '@/ui/Pressable'
@@ -45,6 +46,7 @@ export default function PlaceScreen() {
   const [pinPlace, setPinPlace] = useState<Place | null>(null)
   const [me, setMe] = useState<LngLat | null>(null)
   const [focused, setFocused] = useState(false)
+  const search = inputFrame({ focused })
 
   useEffect(() => { geo.recent().then(setRecent).catch(() => {}); geo.myPosition().then(setMe).catch(() => {}) }, [])
 
@@ -94,7 +96,7 @@ export default function PlaceScreen() {
       <View style={{ width: '100%', maxWidth: tokens.layout['max-content'], alignSelf: 'center', flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}>
           <IconButton icon={X} label="Fermer" variant="ghost" onPress={() => router.back()} />
-          <View style={[{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 48, paddingHorizontal: 16, borderRadius: tokens.radius.pill, backgroundColor: color('surface'), borderWidth: 1, borderColor: focused ? color('accent') : color('border') }, focused && (focusRing as object)]}>
+          <View style={[search.style, { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: tokens.size.input, paddingHorizontal: 14 + search.inset, borderRadius: tokens.radius.pill }]}>
             <Search size={18} color={color('text-subtle')} />
             <TextInput value={q} onChangeText={setQ} autoFocus placeholder={isPickup ? 'Point de départ' : 'Adresse, lieu, quartier'}
               placeholderTextColor={color('text-subtle')} accessibilityLabel={isPickup ? 'Rechercher le point de départ' : 'Rechercher l’arrivée'}

@@ -40,7 +40,7 @@ export const shadow = (kind: keyof typeof tokens.shadow) => {
 // Anneau de focus clavier (web et clavier externe).
 export const focusRing = {
   outlineColor: tokens.color.focus,
-  outlineWidth: 2,
+  outlineWidth: 3,
   outlineStyle: 'solid',
   outlineOffset: 2,
 } as const
