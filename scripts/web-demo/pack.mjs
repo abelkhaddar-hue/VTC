@@ -11,7 +11,8 @@ const faces = ['400Regular', '500Medium', '600SemiBold', '700Bold', '800ExtraBol
   return `@font-face{font-family:"Inter_${w}";src:url(data:font/ttf;base64,${readFileSync(join(fontDir, w, file)).toString('base64')}) format("truetype");font-display:block}`
 })
 writeFileSync(join(dest, 'fonts.css'), faces.join('\n') + '\n')
-writeFileSync(join(dest, 'index.html'), `<title>Ride démo</title>
+writeFileSync(join(dest, 'index.html'), `<meta charset="utf-8">
+<title>Ride démo</title>
 <link rel="stylesheet" href="fonts.css">
 <style>
 html,body{height:100%}
@@ -21,8 +22,15 @@ body{overflow:hidden;margin:0;background:#ffffff;color:#000000}
 <div id="root"></div>
 <script>
 window.__RIDE_FONTS_INLINED__ = true;
-try { if (location.pathname !== '/') history.replaceState(null, '', '/'); } catch (e) {}
+// L'adresse du code est calculée AVANT de ramener l'URL à « / » (attendu par la navigation de l'app) :
+// sinon le navigateur chercherait app.js à la racine du site, d'où une page blanche.
+(function () {
+  var src = new URL('app.js', document.baseURI).href;
+  try { if (location.pathname !== '/') history.replaceState(null, '', '/'); } catch (e) {}
+  var s = document.createElement('script');
+  s.src = src;
+  document.body.appendChild(s);
+})();
 </script>
-<script src="app.js"></script>
 `)
 for (const f of readdirSync(dest)) console.log(f, (readFileSync(join(dest, f)).length / 1048576).toFixed(2), 'Mo')
