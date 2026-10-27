@@ -15,6 +15,8 @@ module.exports = {
     "accent-soft": "rgb(var(--color-accent-soft) / <alpha-value>)",
     "on-accent": "rgb(var(--color-on-accent) / <alpha-value>)",
     "on-accent-soft": "rgb(var(--color-on-accent-soft) / <alpha-value>)",
+    "info": "rgb(var(--color-info) / <alpha-value>)",
+    "info-soft": "rgb(var(--color-info-soft) / <alpha-value>)",
     "focus": "rgb(var(--color-focus) / <alpha-value>)",
     "danger": "rgb(var(--color-danger) / <alpha-value>)",
     "danger-soft": "rgb(var(--color-danger-soft) / <alpha-value>)",
@@ -72,22 +74,22 @@ module.exports = {
     "lg": [
       "20px",
       {
-        "lineHeight": "26px",
-        "fontWeight": "600"
+        "lineHeight": "28px",
+        "fontWeight": "700"
       }
     ],
     "xl": [
       "28px",
       {
-        "lineHeight": "34px",
+        "lineHeight": "36px",
         "fontWeight": "700"
       }
     ],
     "display": [
-      "40px",
+      "36px",
       {
         "lineHeight": "44px",
-        "fontWeight": "800"
+        "fontWeight": "700"
       }
     ]
   },

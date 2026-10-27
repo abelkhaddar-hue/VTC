@@ -1,5 +1,9 @@
 # Composants
 
+> **Style : Base (système de design d'Uber), depuis le 2026-10-27.** Valeurs tirées des pages publiques de base.uber.com (dimensions, rayons, élévation) et du paquet open source Base Web (`baseui`, licence MIT) pour les couleurs, la typographie et le mouvement. Non repris : la police Uber Move (propriétaire, remplacée par Inter), les logos, icônes et illustrations d'Uber, et les pages privées (Color 2.0, Typography 2.0). Écart voulu : boutons en pilule (règle du projet ; Base l'autorise, son défaut est 8 px).
+>
+> Règles Base appliquées : noir = action principale ; grilles et espacements en multiples de 4 ; marges 16 ; barre du haut 48 ; rayons 4 / 8 / 12 / 16 ; **pas d'ombre pour séparer des cartes** (bordure ou fond), ombre seulement pour ce qui flotte (panneau sur la carte, boutons sur la carte, dialogues).
+
 Source des valeurs : `tokens.json` (jamais de couleur en dur dans un composant).
 Code : `app/src/ui/`. Vitrine : route `/design` de l'app (`app/src/app/design.tsx`).
 

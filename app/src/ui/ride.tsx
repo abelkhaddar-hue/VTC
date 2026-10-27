@@ -212,8 +212,7 @@ export function OfferCard({ offer, onAccept, onDecline, accepting, disabled }: {
     <Animated.View
       accessibilityLiveRegion="polite"
       style={[
-        { backgroundColor: color('bg'), borderRadius: tokens.radius.lg, overflow: 'hidden', opacity: slide, transform: [{ translateY: slide.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }] },
-        shadow('card'),
+        { backgroundColor: color('bg'), borderRadius: tokens.radius.lg, borderWidth: 1, borderColor: color('border'), overflow: 'hidden', opacity: slide, transform: [{ translateY: slide.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }] },
       ]}
     >
       <View

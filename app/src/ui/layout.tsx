@@ -14,7 +14,7 @@ const column = { width: '100%', maxWidth: tokens.layout['max-content'], alignSel
 export function Header({ title, onBack, close }: { title?: string; onBack?: () => void; close?: boolean }) {
   const back = onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/home')))
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 56, paddingHorizontal: 8 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: tokens.layout.header, paddingHorizontal: 8 }}>
       <IconButton icon={close ? X : ArrowLeft} label={close ? 'Fermer' : 'Retour'} variant="ghost" onPress={back} />
       {title ? <Text variant="lg" heading numberOfLines={1} style={{ flex: 1 }}>{title}</Text> : null}
     </View>

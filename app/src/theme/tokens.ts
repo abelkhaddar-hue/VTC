@@ -2,31 +2,33 @@
 export const tokens = {
   "color": {
     "bg": "#ffffff",
-    "surface": "#f6f6f4",
-    "surface-2": "#ececea",
-    "tile": "#eaf0fb",
-    "border": "#e2e2df",
-    "border-input": "#8a8a85",
-    "text": "#171717",
-    "text-muted": "#5f5f5a",
-    "text-subtle": "#6c6c66",
-    "accent": "#2e5bd8",
-    "accent-pressed": "#2449b0",
-    "accent-soft": "#e6edfc",
+    "surface": "#f3f3f3",
+    "surface-2": "#e8e8e8",
+    "tile": "#f3f3f3",
+    "border": "#e8e8e8",
+    "border-input": "#727272",
+    "text": "#000000",
+    "text-muted": "#4b4b4b",
+    "text-subtle": "#5e5e5e",
+    "accent": "#000000",
+    "accent-pressed": "#282828",
+    "accent-soft": "#e8e8e8",
     "on-accent": "#ffffff",
-    "on-accent-soft": "#1d3f9c",
-    "focus": "#2e5bd8",
-    "danger": "#c4302b",
-    "danger-soft": "#fdecea",
-    "success": "#1d7a4a",
-    "success-soft": "#e6f4ec",
-    "warning": "#8a5a00",
-    "warning-soft": "#fff4d6",
-    "star": "#b07d00",
-    "overlay": "#171717",
-    "marker-pickup": "#2e5bd8",
-    "marker-dropoff": "#1d7a4a",
-    "route": "#171717"
+    "on-accent-soft": "#000000",
+    "info": "#175bcc",
+    "info-soft": "#eff4fe",
+    "focus": "#276ef1",
+    "danger": "#bb032a",
+    "danger-soft": "#fff0ee",
+    "success": "#166c3b",
+    "success-soft": "#eaf6ed",
+    "warning": "#845201",
+    "warning-soft": "#fdf2dc",
+    "star": "#000000",
+    "overlay": "#000000",
+    "marker-pickup": "#000000",
+    "marker-dropoff": "#276ef1",
+    "route": "#000000"
   },
   "font": {
     "sans": "Inter",
@@ -51,18 +53,18 @@ export const tokens = {
     },
     "lg": {
       "size": 20,
-      "line": 26,
-      "weight": 600
+      "line": 28,
+      "weight": 700
     },
     "xl": {
       "size": 28,
-      "line": 34,
+      "line": 36,
       "weight": 700
     },
     "display": {
-      "size": 40,
+      "size": 36,
       "line": 44,
-      "weight": 800
+      "weight": 700
     }
   },
   "space": [
@@ -78,26 +80,26 @@ export const tokens = {
     64
   ],
   "radius": {
-    "sm": 8,
-    "md": 12,
-    "lg": 16,
-    "xl": 24,
+    "sm": 4,
+    "md": 8,
+    "lg": 12,
+    "xl": 16,
     "pill": 999
   },
   "shadow": {
     "card": {
       "y": 1,
-      "blur": 3,
-      "opacity": 0.1
+      "blur": 4,
+      "opacity": 0.16
     },
     "sheet": {
-      "y": -4,
-      "blur": 16,
-      "opacity": 0.12
+      "y": -2,
+      "blur": 8,
+      "opacity": 0.16
     },
     "pop": {
-      "y": 12,
-      "blur": 32,
+      "y": 8,
+      "blur": 24,
       "opacity": 0.16
     }
   },
@@ -120,14 +122,23 @@ export const tokens = {
     "breakpoints": {
       "phone": 0,
       "tablet": 768
-    }
+    },
+    "header": 48
   },
   "motion": {
-    "fast": 120,
+    "fast": 100,
     "base": 200,
-    "slow": 320,
-    "ease": "cubic-bezier(.2,.8,.2,1)",
-    "offer-in": 240
+    "slow": 300,
+    "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+    "offer-in": 250
+  },
+  "_source": {
+    "couleurs": "baseui themes/light-theme : primaryA noir, primaryB blanc, gray50-900, blue600, red600, green600, yellow600 (MIT)",
+    "typo": "baseui themes/shared/typography : 12/16, 14/20, 16/24, 20/28, 28/36, 36/44",
+    "espacements": "base.uber.com Dimensions : multiples de 4, marges 16, barre de navigation 44 (iOS) / 48 (Android)",
+    "rayons": "base.uber.com Corner radius 1.0 : 4, 8, 12, 16 selon la taille du composant",
+    "elevation": "base.uber.com Elevation 1.0 : ombres seulement pour ce qui flotte (panneau sur carte, dialogue, bouton sur carte) ; pas d'ombre pour séparer des cartes",
+    "mouvement": "baseui themes/shared/animation : 100 / 200 / 300 ms, easeDecelerate"
   }
 } as const
 

@@ -7,7 +7,7 @@ import { Touchable } from './Pressable'
 
 export function Card({ children, style, tone = 'bg' }: { children: ReactNode; style?: ViewStyle; tone?: 'bg' | 'surface' }) {
   return (
-    <View style={[{ backgroundColor: color(tone), borderRadius: tokens.radius.lg, padding: 16 }, tone === 'bg' && shadow('card'), style]}>
+    <View style={[{ backgroundColor: color(tone), borderRadius: tokens.radius.lg, padding: 16 }, tone === 'bg' && { borderWidth: 1, borderColor: color('border') }, style]}>
       {children}
     </View>
   )
@@ -78,7 +78,7 @@ export function Chip({ label, selected, onPress, icon: Icon }: { label: string; 
 }
 
 const bannerLook: Record<'info' | 'success' | 'warning' | 'danger', { bg: ColorRole; fg: ColorRole; icon: LucideIcon }> = {
-  info: { bg: 'accent-soft', fg: 'on-accent-soft', icon: Info },
+  info: { bg: 'info-soft', fg: 'info', icon: Info },
   success: { bg: 'success-soft', fg: 'success', icon: CircleCheck },
   warning: { bg: 'warning-soft', fg: 'warning', icon: TriangleAlert },
   danger: { bg: 'danger-soft', fg: 'danger', icon: CircleAlert },

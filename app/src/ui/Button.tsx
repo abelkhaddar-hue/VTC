@@ -53,12 +53,11 @@ export function Button({ label, onPress, variant = 'primary', size = 'md', icon:
           opacity: disabled ? 0.4 : variant === 'danger' && pressed ? 0.85 : 1,
           alignSelf: fullWidth || size === 'lg' ? 'stretch' : 'flex-start',
         },
-        variant === 'primary' && !disabled && shadow('card'),
       ]}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         {loading ? <ActivityIndicator color={fg} size="small" /> : Icon ? <Icon color={fg} size={tokens.size.icon} /> : null}
-        <Text variant={size === 'sm' ? 'sm' : 'base'} weight={600} tone={l.tone}>{label}</Text>
+        <Text variant={size === 'sm' ? 'sm' : 'base'} weight={500} tone={l.tone}>{label}</Text>
       </View>
       {trailing ? <Text variant={size === 'sm' ? 'sm' : 'base'} weight={700} tone={l.tone} tabular>{trailing}</Text> : null}
     </Touchable>
